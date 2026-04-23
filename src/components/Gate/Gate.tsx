@@ -58,10 +58,18 @@ export function Gate({ entered, onEnter }: Props) {
 
       <div className="gate-inner">
         <div className="logo-wrap">
-          <img className="logo-img" src="/assets/merken.png" alt="Merken — Church of Decay" />
+          <img
+            className="logo-img"
+            src="/assets/merken.webp"
+            alt="Merken — Church of Decay"
+            width="700"
+            height="694"
+            fetchPriority="high"
+            decoding="async"
+          />
         </div>
         <Whisper entered={entered} />
-        <h1 className="gate-title">Church of Decay</h1>
+        <div className="gate-title">Church of Decay</div>
         <div className="gate-latin">· Ecclesia Putredinis ·</div>
         <div className="gate-prompt">the faithful gather below</div>
         <button className="gate-button" type="button" onClick={onEnter}>

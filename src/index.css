@@ -497,6 +497,23 @@ body::before {
 @media (prefers-reduced-motion: reduce) {
   .scene { transform: none !important; }
   .walker { animation: none !important; }
+
+  /* Comprehensive motion reduction: collapse every decorative animation to a
+     near-zero duration so final state lands instantly (running-state preserved)
+     while removing continuous motion. Essential cross-fades on #gate/#stage
+     retain their transitions — they act as state indicators, not decoration. */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* SVG SMIL animations inside the cathedral backdrop */
+  animate, animateTransform, animateMotion { display: none !important; }
+  /* Fog blobs wiggle; pin them in place */
+  .fog-blob { transform: none !important; }
 }
 
 /* Banners hanging */
@@ -593,6 +610,16 @@ main {
   padding-left: 0.8em; /* compensate for letter-spacing */
 }
 
+.hero-heading {
+  margin: 0;
+  padding: 0;
+  font-weight: 400;
+  font-size: inherit;
+  text-align: center;
+}
+.hero-church,
+.hero-of,
+.hero-decay { display: block; }
 .hero-church,
 .hero-decay {
   font-family: 'UnifrakturCook', serif;

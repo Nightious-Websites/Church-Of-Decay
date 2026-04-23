@@ -16,7 +16,7 @@ export function Quill({ quillRef, ledgerStageRef }: Props) {
   useQuillProximity(quillRef, ledgerStageRef);
   return (
     <div ref={quillRef} className="quill" aria-hidden="true">
-      <img src="/assets/quill_cursor.png" width={90} height={90} alt="" />
+      <img src="/assets/quill_cursor.png" width={44} height={90} alt="" decoding="async" loading="lazy" />
     </div>
   );
 }

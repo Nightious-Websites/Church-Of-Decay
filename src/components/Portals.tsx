@@ -143,7 +143,7 @@ export function Portals() {
           className="portal"
           href={p.href}
           target="_blank"
-          rel="noopener"
+          rel="noopener noreferrer"
         >
           <div className="portal-roman">{p.num}</div>
           {p.icon}

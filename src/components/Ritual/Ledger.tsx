@@ -101,6 +101,7 @@ export function Ledger({ stageRef, quillRef }: Props) {
                   type="text"
                   maxLength={28}
                   placeholder="inscribe thy name…"
+                  aria-label="Inscribe thy name in the ledger"
                   autoComplete="off"
                   spellCheck={false}
                   value={input}

@@ -35,8 +35,11 @@ export function EyeGlare() {
         <img
           ref={imgRef}
           className="gate-watcher-img"
-          src="/assets/merken.png"
+          src="/assets/merken.webp"
           alt=""
+          width="700"
+          height="694"
+          decoding="async"
         />
       </div>
       <div ref={glareRef} className="eye-glare" aria-hidden="true" />

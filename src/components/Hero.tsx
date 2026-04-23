@@ -2,9 +2,11 @@ export function Hero() {
   return (
     <section className="hero">
       <div className="eyebrow">Worshippers of the Dead God</div>
-      <div className="hero-church">Church</div>
-      <div className="hero-of">— of —</div>
-      <div className="hero-decay">Decay</div>
+      <h1 className="hero-heading" aria-label="Church of Decay">
+        <span className="hero-church" aria-hidden="true">Church</span>
+        <span className="hero-of" aria-hidden="true">— of —</span>
+        <span className="hero-decay" aria-hidden="true">Decay</span>
+      </h1>
       <div className="hero-rose-gap" />
 
       <div className="divider">
