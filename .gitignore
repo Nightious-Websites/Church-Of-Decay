@@ -8,3 +8,11 @@ CLAUDE.md
 # Superpowers brainstorm artifacts
 .superpowers/
 docs/superpowers/
+
+# Node / Vite build artifacts
+node_modules/
+dist/
+.vite/
+
+# Legacy pre-migration snapshot (kept locally for reference during port)
+index.legacy.html
