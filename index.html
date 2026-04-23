@@ -4,29 +4,2940 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>The Church of Decay — Order of Merken</title>
-<meta name="description" content="An unofficial reliquary for The Church of Decay — a Roblox horror role-play experience. Enter the nave, sign the ledger, and join the Order of Merken." />
-<meta name="theme-color" content="#0a0404" />
-<meta name="color-scheme" content="dark" />
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<link rel="apple-touch-icon" href="/favicon.svg" />
-<link rel="preload" as="image" href="/assets/meirkien.png" fetchpriority="high" />
-<meta property="og:type" content="website" />
-<meta property="og:title" content="The Church of Decay — Order of Merken" />
-<meta property="og:description" content="Beneath the Bonelands, where the antlered god lies sleeping and the stones weep rust — the faithful keep the long vigil." />
-<meta property="og:image" content="/assets/meirkien.png" />
-<meta property="og:locale" content="en_US" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="The Church of Decay — Order of Merken" />
-<meta name="twitter:description" content="Beneath the Bonelands, where the antlered god lies sleeping and the stones weep rust — the faithful keep the long vigil." />
-<meta name="twitter:image" content="/assets/meirkien.png" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=UnifrakturCook:wght@700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@300;400&display=swap" />
-<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=UnifrakturCook:wght@700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@300;400&display=swap" />
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=UnifrakturCook:wght@700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@300;400&display=swap" /></noscript>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=UnifrakturCook:wght@700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+/* ───────── TWEAKABLE DEFAULTS ───────── */
+</style>
+<script>
+const DEFAULTS = {
+  "bloodHue": 0,
+  "ambientIntensity": 0.7,
+  "grainOpacity": 0.5,
+  "heartbeatBpm": 72,
+  "showSigils": true,
+  "fogDensity": 1,
+  "displayFont": "UnifrakturCook"
+};
+</script>
+<style>
+:root {
+  --blood: #7a0a0a;
+  --blood-deep: #3d0606;
+  --blood-bright: #c41818;
+  --ember: #ff3814;
+  --ash: #d8c9a8;
+  --parchment: #e8dcb8;
+  --bone: #c9b98e;
+  --ink: #0a0404;
+  --coal: #18090a;
+  --stone: #2a1a16;
+  --candle: #ffb347;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: #000;
+  color: var(--parchment);
+  font-family: 'EB Garamond', 'Palatino', serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><circle cx='12' cy='12' r='2' fill='%23ff3814'/><circle cx='12' cy='12' r='6' fill='none' stroke='%237a0a0a' stroke-width='0.5'/></svg>") 12 12, auto;
+}
+
+body {
+  position: relative;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 30%, #2a0505 0%, #140202 45%, #050101 100%);
+}
+
+/* Film grain overlay */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: var(--grain-op, 0.18);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='5'/><feColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.2 0 0 0 0 0.1 0 0 0 0.6 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+  mix-blend-mode: overlay;
+}
+
+/* Vignette */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 9997;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.7) 100%);
+}
+
+/* ────────── GATE (intro screen) ────────── */
+#gate {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: radial-gradient(ellipse 90% 80% at 50% 40%, #160202 0%, #0a0101 50%, #000 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  transition: opacity 1.8s ease, visibility 1.8s;
+}
+#gate.dissolved { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.gate-vignette {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(122,10,10,0.35) 0%, transparent 55%),
+    radial-gradient(circle at 50% 50%, transparent 65%, #000 95%);
+}
+
+.gate-inner {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 560px;
+  padding: 40px;
+  opacity: 0;
+  animation: gateReveal 0.5s ease 0.65s forwards;
+}
+
+
+.gate-whisper {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 15px;
+  letter-spacing: 0.15em;
+  color: rgba(232,220,184,0.45);
+  margin-bottom: 14px;
+  text-transform: lowercase;
+  min-height: 22px;
+  transition: opacity 0.6s;
+}
+
+.gate-title {
+  font-family: 'UnifrakturCook', serif;
+  font-size: clamp(38px, 7vw, 54px);
+  color: var(--parchment);
+  text-shadow: 0 0 40px rgba(196,24,24,0.5), 0 0 80px rgba(122,10,10,0.3);
+  letter-spacing: 0.02em;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.gate-prompt {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.55em;
+  color: rgba(232,220,184,0.5);
+  text-transform: uppercase;
+  margin-bottom: 36px;
+}
+
+.gate-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 44px;
+  background: linear-gradient(180deg, #1a0404 0%, #420808 50%, #1a0404 100%);
+  border: 1px solid rgba(196,24,24,0.55);
+  color: var(--parchment);
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.4s ease;
+  clip-path: polygon(14px 0, calc(100% - 14px) 0, 100% 14px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 14px 100%, 0 calc(100% - 14px), 0 14px);
+  animation: btnPulse 2.8s ease-in-out infinite;
+}
+.gate-button:hover {
+  background: linear-gradient(180deg, #5a0a0a, #9a1818, #5a0a0a);
+  color: #fff;
+  letter-spacing: 0.5em;
+  box-shadow: 0 0 30px rgba(196,24,24,0.6), inset 0 0 30px rgba(255,56,20,0.3);
+}
+.gate-button::before {
+  content: '▾';
+  font-size: 10px;
+  color: var(--ember);
+}
+.gate-button::after {
+  content: '▾';
+  font-size: 10px;
+  color: var(--ember);
+}
+
+.gate-warning {
+  margin-top: 32px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: rgba(232,220,184,0.2);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.gate-close {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  background: none;
+  border: 1px solid rgba(196,24,24,0.3);
+  color: rgba(232,220,184,0.4);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.gate-close:hover {
+  color: rgba(232,220,184,0.85);
+  border-color: rgba(196,24,24,0.7);
+}
+
+/* ── Gate redesign: keyframes ── */
+@keyframes archReveal {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes logoDescend {
+  0%   { opacity: 0; transform: translateY(-50px) scale(0.9); }
+  60%  { opacity: 1; transform: translateY(6px) scale(1.02); }
+  80%  { transform: translateY(-2px) scale(0.99); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes logoGlow {
+  0%, 100% { opacity: 0.85; }
+  50%       { opacity: 1; }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes btnPulse {
+  0%, 100% { opacity: 0.85; }
+  50%       { opacity: 1; }
+}
+@keyframes staticFadeOut {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes watcherFade {
+  0%, 40% { opacity: 1; }
+  100%     { opacity: 0; }
+}
+@keyframes eyeStare {
+  0%, 50% { opacity: 1; }
+  100%    { opacity: 0; }
+}
+@keyframes eyePulse {
+  0%, 100% { opacity: 0.8; }
+  50%      { opacity: 1; }
+}
+@keyframes gateReveal {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes emberFloat {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  8%   { opacity: 0.85; }
+  85%  { opacity: 0.3; }
+  100% { transform: translateY(-280px) translateX(var(--dx)); opacity: 0; }
+}
+
+/* ── Gate redesign: new classes ── */
+.arch-wrap {
+  position: absolute;
+  width: min(520px, 92vw);
+  height: min(640px, 88vh);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  animation: gateReveal 0.5s ease 0.65s forwards;
+}
+.gate-static {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 200;
+  pointer-events: none;
+  image-rendering: pixelated;
+  transition: opacity 0.35s ease;
+}
+.logo-wrap {
+  width: min(260px, 58vw);
+  height: min(260px, 58vw);
+  margin: 0 auto 28px;
+}
+.logo-img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  mix-blend-mode: screen;
+  animation: logoGlow 3.5s ease-in-out 2.2s infinite;
+}
+.gate-latin {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: clamp(12px, 1.6vw, 15px);
+  color: rgba(232,220,184,0.38);
+  letter-spacing: 0.25em;
+  margin-bottom: 18px;
+}
+.gate-watcher {
+  position: fixed;
+  inset: 0;
+  z-index: 201;
+  overflow: hidden;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  animation: watcherFade 0.7s ease-out forwards;
+}
+.eye-glare {
+  position: fixed;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 202;
+  box-shadow: 0 0 16px 8px rgba(255,255,255,0.9);
+  animation: eyeStare 0.7s ease-out forwards, eyePulse 0.4s ease-in-out infinite;
+}
+.gate-watcher-img {
+  position: absolute;
+  width: 72vw;
+  height: 72vw;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -44%);
+  object-fit: contain;
+  opacity: 0.6;
+  filter: grayscale(1) brightness(1.3) contrast(2) blur(2px)
+          drop-shadow(0 0 24px rgba(255,255,255,0.35));
+}
+.ember {
+  position: fixed;
+  border-radius: 50%;
+  background: #ff3814;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0;
+  animation: emberFloat linear infinite;
+}
+
+/* ────────── MAIN STAGE ────────── */
+#stage {
+  opacity: 0;
+  transition: opacity 2s ease 0.5s;
+  position: relative;
+  z-index: 1;
+}
+#stage.revealed { opacity: 1; }
+
+/* Cathedral backdrop (pure CSS) */
+.cathedral {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.arches {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.9;
+}
+.scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 300vh;
+}
+@keyframes bannerSway {
+  0%, 100% { transform: rotate(-1.5deg); }
+  50%      { transform: rotate(1.5deg); }
+}
+@keyframes chandelier {
+  0%, 100% { transform: rotate(-0.8deg); }
+  50%      { transform: rotate(0.8deg); }
+}
+
+.arch {
+  position: absolute;
+  bottom: 0;
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(20,5,5,0.4) 50%, rgba(40,8,8,0.9) 100%);
+  filter: blur(3px);
+}
+.arch svg { width: 100%; height: 100%; }
+
+.fog {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  background:
+    radial-gradient(ellipse at 20% 100%, rgba(80,10,10,0.35) 0%, transparent 45%),
+    radial-gradient(ellipse at 80% 100%, rgba(80,10,10,0.35) 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 110%, rgba(120,20,20,0.4) 0%, transparent 50%);
+  opacity: var(--fog-op, 0.7);
+}
+
+/* Procedural fog — 3 blurred radial blobs drifting independently. */
+.fog-layer {
+  position: fixed;
+  inset: -30vmax;
+  pointer-events: none;
+  z-index: 4;
+  opacity: calc(var(--fog-op, 0.7) * 0.8);
+}
+.fog-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  will-change: transform;
+}
+.fog-blob.b1 {
+  width: 90vmax; height: 90vmax;
+  top: 5vmax; left: -10vmax;
+  background: radial-gradient(circle, rgba(180,30,30,0.45) 0%, transparent 70%);
+  animation: driftA 70s ease-in-out infinite alternate;
+}
+.fog-blob.b2 {
+  width: 110vmax; height: 110vmax;
+  top: 20vmax; right: -20vmax;
+  background: radial-gradient(circle, rgba(120,15,15,0.5) 0%, transparent 65%);
+  animation: driftB 95s ease-in-out infinite alternate;
+}
+.fog-blob.b3 {
+  width: 70vmax; height: 70vmax;
+  bottom: -20vmax; left: 20vmax;
+  background: radial-gradient(circle, rgba(80,8,8,0.6) 0%, transparent 70%);
+  animation: driftC 110s ease-in-out infinite alternate;
+}
+@keyframes driftA {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(10vmax, -6vmax) scale(1.15); }
+  100% { transform: translate(-8vmax, 8vmax) scale(0.95); }
+}
+@keyframes driftB {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(-12vmax, 5vmax) scale(0.9); }
+  100% { transform: translate(7vmax, -10vmax) scale(1.1); }
+}
+@keyframes driftC {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(8vmax, -4vmax) scale(1.2); }
+  100% { transform: translate(-10vmax, 6vmax) scale(0.9); }
+}
+
+/* Stained-glass rose window behind hero */
+.rose {
+  position: absolute;
+  top: 42vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(40vmin, 500px);
+  height: min(40vmin, 500px);
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.55;
+  mix-blend-mode: screen;
+  filter: blur(1px);
+  animation: rosePulse 6s ease-in-out infinite;
+}
+@keyframes rosePulse {
+  0%, 100% { opacity: 0.45; }
+  50%      { opacity: 0.7; }
+}
+/* Congregation walkers */
+.walkers {
+  position: absolute;
+  top: calc(300vh * 0.675 - 32px);
+  left: 0;
+  width: 100%;
+  height: 40px;
+  pointer-events: none;
+  overflow: visible;
+}
+.walker {
+  position: absolute;
+  bottom: 0;
+  opacity: 0.35;
+}
+@keyframes walkAcross {
+  from { transform: translateX(-60px); }
+  to   { transform: translateX(calc(100vw + 60px)); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .walker { animation: walkAcross linear infinite; }
+  .w1 { width: 20px; height: 40px; animation-duration: 18s; animation-delay: 0s;    top: 0; }
+  .w2 { width: 16px; height: 32px; animation-duration: 22s; animation-delay: -6s;   top: 4px; opacity: 0.25; }
+  .w3 { width: 24px; height: 48px; animation-duration: 15s; animation-delay: -11s;  top: -4px; }
+  .w4 { width: 14px; height: 28px; animation-duration: 27s; animation-delay: -3s;   top: 6px;  opacity: 0.2; }
+  .w5 { width: 20px; height: 40px; animation-duration: 20s; animation-delay: -17s;  top: 2px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene { transform: none !important; }
+  .walker { animation: none !important; }
+}
+
+/* Banners hanging */
+.banner {
+  position: fixed;
+  top: -20px;
+  width: 110px;
+  background:
+    linear-gradient(180deg, #5a0a0a 0%, #7a0a0a 50%, #3a0505 100%);
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.6));
+  z-index: 1;
+  clip-path: polygon(0 0, 100% 0, 100% 88%, 50% 100%, 0 88%);
+  opacity: 0.85;
+  animation: sway 7s ease-in-out infinite;
+  transform-origin: top center;
+}
+.banner::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(232,220,184,0.25);
+  clip-path: polygon(0 0, 100% 0, 100% 86%, 50% 100%, 0 86%);
+}
+.banner svg {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  opacity: 0.85;
+}
+@keyframes sway {
+  0%, 100% { transform: rotate(-1deg); }
+  50%      { transform: rotate(1deg); }
+}
+
+/* ────────── CONTENT ────────── */
+main {
+  position: relative;
+  z-index: 10;
+  min-height: 100vh;
+  padding: 40px 48px 80px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.topbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 48px;
+  flex-wrap: wrap;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  color: rgba(232,220,184,0.5);
+  text-transform: uppercase;
+  padding-bottom: 20px;
+}
+.topbar .mark {
+  display: flex; align-items: center; gap: 12px; text-align: center;
+}
+.topbar .mark-sigil {
+  width: 20px; height: 20px;
+}
+
+.topbar .anno {
+  display: flex; gap: 24px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-align: center;
+}
+.topbar .anno span { color: rgba(232,220,184,0.4); }
+.topbar .anno b { color: var(--blood-bright); font-weight: 400; }
+
+/* HERO */
+.hero {
+  padding: 2vh 0 80px;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.8em;
+  color: rgba(232,220,184,0.55);
+  text-transform: uppercase;
+  margin-bottom: 26px;
+  padding-left: 0.8em; /* compensate for letter-spacing */
+}
+
+.hero-church,
+.hero-decay {
+  font-family: 'UnifrakturCook', serif;
+  font-size: clamp(64px, 10vw, 140px);
+  line-height: 0.92;
+  color: var(--parchment);
+  text-shadow:
+    0 0 40px rgba(196,24,24,0.5),
+    0 0 80px rgba(122,10,10,0.4),
+    0 3px 0 rgba(0,0,0,0.8);
+  letter-spacing: 0.01em;
+}
+.hero-church { margin-bottom: 0.1em; }
+.hero-decay  { margin-top: -0.16em; }
+.hero-of {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(14px, 1.8vw, 22px);
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  color: rgba(232,220,184,0.6);
+  margin: 0;
+  padding-left: 0.25em;
+}
+.hero-rose-gap {
+  height: calc(min(40vmin, 500px) * 1.15 + 50px);
+  width: 100%;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.hero-subtitle {
+  max-width: 640px;
+  margin: 38px auto 0;
+  font-family: 'EB Garamond', serif;
+  font-size: 19px;
+  font-style: italic;
+  line-height: 1.6;
+  color: rgba(232,220,184,0.75);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 0 0 24px 0;
+  color: var(--blood);
+}
+.divider::before, .divider::after {
+  content: '';
+  width: 100px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--blood), transparent);
+}
+.divider-glyph {
+  width: 24px; height: 24px;
+  color: var(--blood-bright);
+}
+
+/* CREED — whispered verses */
+.creed {
+  text-align: center;
+  padding: 40px 0 60px;
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 17px;
+  line-height: 2;
+  color: rgba(232,220,184,0.7);
+}
+.creed p { margin: 0; }
+.creed .line {
+  display: inline-block;
+  opacity: 0.4;
+  transition: opacity 0.6s, color 0.6s, text-shadow 0.6s;
+}
+.creed .line.lit {
+  opacity: 1;
+  color: var(--parchment);
+  text-shadow: 0 0 20px rgba(196,24,24,0.6);
+}
+.creed .drop {
+  font-family: 'UnifrakturCook', serif;
+  font-size: 2.2em;
+  display: inline;
+  vertical-align: -0.3em;
+  margin-right: 2px;
+  color: var(--blood-bright);
+  text-shadow: 0 0 20px rgba(196,24,24,0.5);
+}
+
+/* GATES / LINKS — four portals */
+.gates-label {
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.6em;
+  color: rgba(232,220,184,0.5);
+  text-transform: uppercase;
+  margin: 40px 0 36px;
+}
+
+.gates {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+@media (max-width: 1000px) {
+  .gates { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .gates { grid-template-columns: 1fr; }
+  main { padding: 30px 20px 60px; }
+  .hero { padding: 60px 0 40px; }
+}
+
+.portal {
+  position: relative;
+  display: block;
+  padding: 32px 24px 32px;
+  background:
+    linear-gradient(180deg, rgba(42,6,6,0.85) 0%, rgba(20,3,3,0.85) 100%);
+  border: 1px solid rgba(122,10,10,0.5);
+  color: var(--parchment);
+  text-decoration: none;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  min-height: 340px;
+  cursor: pointer;
+}
+
+.portal::before {
+  /* Pointed-arch frame */
+  content: '';
+  position: absolute;
+  top: 16px; left: 16px; right: 16px; bottom: 16px;
+  border: 1px solid rgba(232,220,184,0.18);
+  clip-path: polygon(
+    0 40px, 50% 0, 100% 40px, 100% 100%, 0 100%
+  );
+  pointer-events: none;
+  transition: all 0.5s;
+}
+
+.portal::after {
+  /* Ember glow on hover */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 30%, rgba(255,56,20,0.35), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
+}
+
+.portal:hover {
+  border-color: var(--blood-bright);
+  transform: translateY(-4px);
+  box-shadow:
+    0 20px 40px rgba(0,0,0,0.6),
+    0 0 60px rgba(196,24,24,0.4),
+    inset 0 0 40px rgba(255,56,20,0.15);
+}
+.portal:hover::before { border-color: rgba(232,220,184,0.5); }
+.portal:hover::after  { opacity: 1; }
+.portal:hover .portal-icon { transform: scale(1.08); color: #fff; filter: drop-shadow(0 0 20px var(--ember)); }
+.portal:hover .portal-enter { letter-spacing: 0.7em; color: var(--parchment); }
+.portal:hover .portal-enter::after { width: 40px; }
+
+.portal-roman {
+  position: absolute;
+  top: 14px;
+  left: 20px;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: rgba(232,220,184,0.4);
+  text-align: center;
+}
+
+.portal-icon {
+  width: 80px; height: 80px;
+  margin: 28px auto 24px;
+  display: block;
+  color: var(--blood-bright);
+  transition: all 0.5s;
+  filter: drop-shadow(0 0 12px rgba(196,24,24,0.5));
+}
+
+.portal-name {
+  font-family: 'UnifrakturCook', serif;
+  font-size: 30px;
+  text-align: center;
+  color: var(--parchment);
+  line-height: 1;
+  margin-bottom: 10px;
+  text-shadow: 0 0 20px rgba(196,24,24,0.4);
+}
+
+.portal-latin {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--blood-bright);
+  margin-bottom: 16px;
+}
+
+.portal-desc {
+  font-family: 'EB Garamond', serif;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+  color: rgba(232,220,184,0.65);
+  font-style: italic;
+  margin-bottom: 24px;
+  min-height: 3em;
+}
+
+.portal-enter {
+  position: absolute;
+  bottom: 28px;
+  left: 0; right: 0;
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: rgba(232,220,184,0.6);
+  transition: all 0.5s;
+}
+.portal-enter::after {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 1px;
+  background: var(--blood-bright);
+  margin: 8px auto 0;
+  transition: width 0.5s;
+}
+
+/* ────────── HEARTBEAT / RITUAL PANEL ────────── */
+.ritual {
+  margin-top: 120px;
+  padding: 80px 20px 100px;
+  position: relative;
+  text-align: center;
+}
+.ritual-eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.6em;
+  text-transform: uppercase;
+  color: rgba(232,220,184,0.55);
+  margin-bottom: 16px;
+}
+.ritual-title {
+  font-family: 'UnifrakturCook', serif;
+  font-size: 56px;
+  color: var(--parchment);
+  line-height: 1.05;
+  margin-bottom: 14px;
+  text-shadow: 0 0 24px rgba(196,24,24,0.25);
+}
+.ritual-sub {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 17px;
+  color: rgba(232,220,184,0.6);
+  max-width: 600px;
+  margin: 0 auto 50px;
+  line-height: 1.6;
+}
+
+/* ────────── LEDGER (Rite of the Inscription) ────────── */
+.ledger-stage {
+  position: relative;
+  aspect-ratio: 1.1;
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.ledger-glow {
+  position: absolute;
+  inset: -8%;
+  background: radial-gradient(ellipse at center, rgba(255, 140, 60, 0.22) 0%, rgba(196, 24, 24, 0.10) 35%, transparent 70%);
+  filter: blur(20px);
+  pointer-events: none;
+  animation: ledgerGlow 7s ease-in-out infinite;
+}
+@keyframes ledgerGlow {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.04); }
+}
+
+.ledger-book {
+  position: absolute;
+  inset: 6% 4%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  transform-style: preserve-3d;
+  background:
+    linear-gradient(180deg, rgba(30, 18, 12, 0.6) 0%, rgba(12, 6, 3, 0.9) 100%),
+    repeating-linear-gradient(90deg, transparent 0px, transparent 39px, rgba(0,0,0,0.08) 40px);
+  border: 1px solid rgba(184, 138, 82, 0.4);
+  border-radius: 4px 6px 6px 4px;
+  box-shadow:
+    0 30px 60px rgba(0,0,0,0.7),
+    0 0 0 1px rgba(0,0,0,0.5),
+    inset 0 0 80px rgba(0,0,0,0.6);
+  transform: perspective(1400px) rotateX(4deg);
+  transform-origin: center bottom;
+  overflow: hidden;
+}
+.ledger-book::before {
+  /* aged leather edges */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(0,0,0,0.5) 100%),
+    repeating-linear-gradient(45deg, transparent 0px, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+.ledger-spine {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.85) 20%, rgba(0,0,0,0.85) 80%, transparent 100%);
+  box-shadow: -3px 0 8px rgba(0,0,0,0.6), 3px 0 8px rgba(0,0,0,0.6);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ledger-page {
+  position: relative;
+  padding: 22px 22px 26px;
+  backface-visibility: hidden;
+  background:
+    radial-gradient(ellipse at 30% 30%, rgba(232, 208, 160, 0.07), transparent 60%),
+    linear-gradient(180deg, rgba(68, 40, 20, 0.35) 0%, rgba(30, 14, 6, 0.55) 100%);
+  color: rgba(232, 220, 184, 0.82);
+  font-family: 'EB Garamond', serif;
+  font-size: 14px;
+  line-height: 1.75;
+  overflow: hidden;
+}
+.ledger-page--left  { padding-right: 18px; transform-origin: right center; }
+.ledger-page--right { padding-left: 18px; display: flex; flex-direction: column; transform-origin: left center; }
+
+/* ── Ledger: closed-state page folds ── */
+.ledger-stage.is-closed .ledger-page--left  { transform: rotateY(82deg); }
+.ledger-stage.is-closed .ledger-page--right { transform: rotateY(-82deg); }
+
+/* ── Ledger: spine unfold animation ── */
+@keyframes unfoldLeft {
+  from { transform: rotateY(82deg); }
+  to   { transform: rotateY(0deg); }
+}
+@keyframes unfoldRight {
+  from { transform: rotateY(-82deg); }
+  to   { transform: rotateY(0deg); }
+}
+
+.ledger-stage.is-opening .ledger-page--left {
+  animation: unfoldLeft 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+.ledger-stage.is-opening .ledger-page--right {
+  animation: unfoldRight 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.08s forwards;
+}
+
+/* After opening, pages stay at 0deg (animation fill keeps them there) */
+.ledger-stage.is-idle .ledger-page--left,
+.ledger-stage.is-idle .ledger-page--right,
+.ledger-stage.is-typing .ledger-page--left,
+.ledger-stage.is-typing .ledger-page--right,
+.ledger-stage.is-signed .ledger-page--left,
+.ledger-stage.is-signed .ledger-page--right {
+  transform: rotateY(0deg);
+}
+
+/* ── Ledger: blinking cursor on signing line ── */
+.ledger-cursor {
+  display: inline-block;
+  width: 1.5px;
+  height: 16px;
+  background: #c41818;
+  box-shadow: 0 0 6px rgba(196, 24, 24, 0.8);
+  vertical-align: middle;
+  margin-right: 2px;
+  flex-shrink: 0;
+  opacity: 0;
+  animation: none;
+}
+
+.ledger-stage.is-idle .ledger-cursor {
+  opacity: 1;
+  animation: ledgerCursorBlink 1.1s step-end infinite;
+}
+
+@keyframes ledgerCursorBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* Cursor hidden once typing starts or after signing */
+.ledger-stage.is-typing .ledger-cursor,
+.ledger-stage.is-signed .ledger-cursor {
+  opacity: 0;
+  animation: none;
+}
+
+/* ── Proximity cursor swap ── */
+body.near-ledger { cursor: none; }
+
+.ledger-page::after {
+  /* parchment grain */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(80, 20, 10, 0.08) 0%, transparent 14%),
+    radial-gradient(circle at 70% 60%, rgba(80, 20, 10, 0.06) 0%, transparent 12%),
+    radial-gradient(circle at 40% 80%, rgba(80, 20, 10, 0.07) 0%, transparent 10%);
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+.ledger-page-head {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  text-align: center;
+  color: rgba(232, 220, 184, 0.45);
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid rgba(184, 138, 82, 0.25);
+}
+
+.ledger-entries {
+  list-style: none;
+  counter-reset: ledger;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+}
+.ledger-entries li {
+  counter-increment: ledger;
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  justify-content: center;
+  padding: 2px 0;
+  font-style: italic;
+  color: rgba(196, 24, 24, 0.78);
+  font-size: 13px;
+  position: relative;
+  text-shadow: 0 0 10px rgba(120, 20, 10, 0.3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.55;
+  text-align: center;
+}
+.ledger-entries li::before {
+  content: counter(ledger, upper-roman) ".";
+  font-family: 'Cinzel', serif;
+  font-style: normal;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: rgba(232, 220, 184, 0.35);
+  flex-shrink: 0;
+}
+.ledger-entries li.old {
+  color: rgba(120, 18, 10, 0.48);
+  text-decoration: line-through;
+  text-decoration-color: rgba(120, 18, 10, 0.3);
+}
+
+.ledger-sign-row {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  justify-content: center;
+  padding: 8px 0 4px;
+  margin-top: 8px;
+  border-top: 1px dashed rgba(184, 138, 82, 0.25);
+  position: relative;
+}
+.ledger-sign-number {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: rgba(232, 220, 184, 0.5);
+  min-width: 28px;
+  flex-shrink: 0;
+}
+.ledger-sign-slot {
+  position: relative;
+  flex: 1;
+  min-height: 26px;
+  border-bottom: 1px solid rgba(184, 138, 82, 0.35);
+}
+.ledger-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: transparent;
+  caret-color: transparent;
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 18px;
+  padding: 0;
+  cursor: none;
+}
+.ledger-input::placeholder {
+  color: rgba(232, 220, 184, 0.25);
+  font-style: italic;
+}
+.ledger-input::selection { background: rgba(196, 24, 24, 0.25); }
+
+.ledger-rendered {
+  position: absolute;
+  inset: 0;
+  font-family: 'UnifrakturCook', serif;
+  font-size: 22px;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  color: #c41818;
+  text-shadow:
+    0 0 14px rgba(196, 24, 24, 0.55),
+    0 0 3px rgba(40, 6, 2, 0.7);
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+.ledger-rendered .letter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(-4px);
+  animation: inkAppear 0.35s ease-out forwards;
+  filter: blur(0.4px);
+}
+.ledger-rendered .letter.wet {
+  animation: inkWet 0.45s ease-out forwards;
+}
+@keyframes inkAppear {
+  0% { opacity: 0; transform: translateY(-6px) scale(1.4); filter: blur(2px); }
+  40% { opacity: 0.7; transform: translateY(0) scale(1.05); filter: blur(0.8px); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0.3px); }
+}
+@keyframes inkWet {
+  0% { opacity: 0; transform: scale(1.6); filter: blur(3px); color: #ff3a18; }
+  100% { opacity: 1; transform: scale(1); filter: blur(0.3px); color: #c41818; }
+}
+
+.ledger-ink-blot {
+  position: absolute;
+  left: -4px;
+  top: -6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(196,24,24,0.85), rgba(40,4,2,0.3) 70%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0);
+}
+.ledger-ink-blot.visible { animation: blotBloom 0.9s ease-out forwards; }
+@keyframes blotBloom {
+  0% { opacity: 0; transform: scale(0); }
+  30% { opacity: 0.9; transform: scale(1.4); }
+  100% { opacity: 0; transform: scale(2.6); }
+}
+
+/* Quill follows the cursor */
+.quill {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 44px;
+  height: 90px;
+  pointer-events: none;
+  transform-origin: 50% 98%;
+  transform: translate(-9999px, -9999px);
+  z-index: 200;
+  filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.7));
+  transition: filter 0.4s ease;
+}
+.quill img {
+  width: 44px;
+  height: 90px;
+  filter: invert(1) sepia(0.4) saturate(0.8) brightness(1.6);
+}
+.quill.writing {
+  transform-origin: 50% 98%;
+}
+.quill.writing img {
+  animation: quillWobble 0.12s ease-in-out infinite alternate;
+}
+@keyframes quillWobble {
+  from { transform: rotate(-2deg); }
+  to   { transform: rotate(2deg); }
+}
+
+/* Sign button — flow element below ledger stage */
+.ledger-sign-btn {
+  display: block;
+  margin: 24px auto 0;
+  transform: translateY(10px);
+  padding: 10px 28px;
+  background: linear-gradient(180deg, rgba(120, 14, 8, 0.9), rgba(60, 6, 4, 0.95));
+  border: 1px solid rgba(196, 24, 24, 0.7);
+  color: #f0e0c0;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease, transform 0.35s ease, background 0.3s, box-shadow 0.3s;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5), inset 0 0 20px rgba(196, 24, 24, 0.25);
+}
+.ledger-sign-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.ledger-sign-btn:hover {
+  background: linear-gradient(180deg, rgba(180, 30, 16, 0.95), rgba(90, 12, 6, 1));
+  box-shadow: 0 6px 30px rgba(196, 24, 24, 0.6), inset 0 0 30px rgba(255, 60, 20, 0.35);
+}
+
+/* Post-sign reveal */
+.ledger-stage.is-signed .ledger-book {
+  animation: bookClose 1.4s ease-in forwards;
+}
+@keyframes bookClose {
+  0% { transform: perspective(1400px) rotateX(4deg) scale(1); filter: brightness(1); }
+  60% { transform: perspective(1400px) rotateX(4deg) scale(1.02); filter: brightness(1.15); }
+  100% { transform: perspective(1400px) rotateX(4deg) scale(0.98); filter: brightness(0.3) blur(2px); }
+}
+
+/* Full-screen gate-opening overlay (plays after signing) */
+.gate-opening {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(60, 8, 4, 0.6) 0%, rgba(0,0,0,0.98) 70%);
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: opacity 1.2s ease-in;
+}
+.gate-opening.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.gate-opening-text {
+  font-family: 'UnifrakturCook', serif;
+  font-size: 48px;
+  color: #c41818;
+  text-shadow: 0 0 40px rgba(196,24,24,0.8);
+  opacity: 0;
+  animation: gateText 2.8s ease-out 0.5s forwards;
+  letter-spacing: 0.02em;
+  max-width: 80vw;
+  line-height: 1.3;
+}
+.gate-opening-name {
+  color: #f0e0c0;
+  display: block;
+  font-size: 32px;
+  margin-top: 10px;
+  opacity: 0.9;
+}
+@keyframes gateText {
+  0% { opacity: 0; transform: scale(0.9); }
+  40% { opacity: 1; transform: scale(1); }
+  85% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.05); }
+}
+
+/* ────────── LITANY / COMMANDMENTS ────────── */
+.litany {
+  margin-top: 120px;
+  max-width: 880px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.litany-head {
+  text-align: center;
+  margin-bottom: 50px;
+}
+.litany-head .eyebrow { padding-left: 0.8em; }
+.litany-head h2 {
+  font-family: 'UnifrakturCook', serif;
+  font-size: 48px;
+  color: var(--parchment);
+  margin-top: 12px;
+}
+
+.commandments {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2px;
+  background: rgba(122,10,10,0.3);
+  border: 1px solid rgba(122,10,10,0.4);
+}
+@media (max-width: 700px) {
+  .commandments { grid-template-columns: 1fr; }
+}
+.cmd {
+  background: rgba(10,4,4,0.9);
+  padding: 28px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  transition: background 0.4s;
+}
+.cmd:hover { background: rgba(42,6,6,0.9); }
+.cmd-num {
+  font-family: 'UnifrakturCook', serif;
+  font-size: 38px;
+  color: var(--blood-bright);
+  line-height: 0.9;
+  text-shadow: 0 0 15px rgba(196,24,24,0.5);
+}
+.cmd-text {
+  font-family: 'EB Garamond', serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(232,220,184,0.8);
+  font-style: italic;
+  text-align: center;
+}
+.cmd-text b {
+  font-style: normal;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--ash);
+  display: block;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+/* ────────── FOOTER ────────── */
+footer {
+  position: relative;
+  z-index: 20;
+  background:
+    linear-gradient(180deg, rgba(5,1,1,0) 0%, rgba(8,2,2,0.97) 18%, #060101 100%);
+  padding: 0;
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  color: rgba(232,220,184,0.65);
+  text-transform: uppercase;
+}
+.footer-inner {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 52px 24px 32px;
+}
+.footer-line {
+  margin-bottom: 4px;
+}
+footer .sig {
+  margin-bottom: 24px;
+  color: var(--blood-bright);
+  font-size: 20px;
+  letter-spacing: 0;
+  opacity: 0.85;
+}
+footer .disclaimer {
+  display: block;
+  margin-top: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: rgba(232,220,184,0.38);
+  text-transform: none;
+  max-width: 520px;
+  margin-left: auto; margin-right: auto;
+  line-height: 1.7;
+}
+
+/* ────────── BLOOD DRIP CURSOR TRAIL ────────── */
+.drip {
+  position: fixed;
+  width: 6px; height: 6px;
+  border-radius: 50% 50% 80% 80% / 50% 50% 100% 100%;
+  background: radial-gradient(circle at 40% 30%, #ff3814, #7a0a0a 70%, #3a0505);
+  pointer-events: none;
+  z-index: 9995;
+  animation: dripfall 2.5s ease-in forwards;
+  filter: blur(0.3px);
+  box-shadow: 0 0 8px rgba(196,24,24,0.6);
+}
+@keyframes dripfall {
+  0% { opacity: 1; transform: scale(1) translateY(0); }
+  70% { opacity: 1; transform: scale(1) translateY(60px); }
+  100% { opacity: 0; transform: scale(0.5) translateY(120px); }
+}
+
+/* utility */
+.pointer-none { pointer-events: none; }
+
+/* Entry-flash effect */
+#flash {
+  position: fixed; inset: 0;
+  background: radial-gradient(circle at center, rgba(255,56,20,0.6), transparent 70%);
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.4s ease-out;
+}
+#flash.on { opacity: 1; }
+
+/* ══════════════════════════════════════════════════════
+   UI POLISH — scrollbar · selection · dividers · reveals
+══════════════════════════════════════════════════════ */
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #060202; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #c41818, #7a0a0a 60%, #3a0505);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(to bottom, #e02020, #c41818); }
+* { scrollbar-color: #7a0a0a #060202; scrollbar-width: thin; }
+
+/* Selection */
+::selection { background: rgba(196,24,24,0.38); color: #f0e0c0; }
+
+/* Ember canvas (injected by JS) */
+#embers {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 8;
+  mix-blend-mode: screen;
+}
+
+/* Gothic section divider */
+.gothic-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 60px auto;
+  max-width: 600px;
+  user-select: none;
+  pointer-events: none;
+}
+.gothic-divider::before,
+.gothic-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+}
+.gothic-divider::before {
+  background: linear-gradient(to right, transparent, rgba(122,10,10,0.7) 80%);
+}
+.gothic-divider::after {
+  background: linear-gradient(to left, transparent, rgba(122,10,10,0.7) 80%);
+}
+.gothic-divider svg {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  margin: 0 18px;
+  opacity: 0.7;
+  animation: sigilPulse 4s ease-in-out infinite;
+}
+@keyframes sigilPulse {
+  0%,100% { opacity: 0.45; }
+  50%      { opacity: 0.82; }
+}
+
+/* Portal candle ambient glow (injected by JS) */
+.portal-candle {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 20px;
+  background: linear-gradient(to top, rgba(196,24,24,0.55), rgba(255,148,20,0.45), transparent);
+  border-radius: 1px;
+  pointer-events: none;
+  z-index: 1;
+  animation: candleBreath 2.8s ease-in-out infinite;
+}
+@keyframes candleBreath {
+  0%   { opacity: 0;    transform: translateX(-50%) scaleY(0.8); }
+  22%  { opacity: 0.55; }
+  50%  { opacity: 1;    transform: translateX(-50%) scaleY(1.12); }
+  68%  { opacity: 0.6;  }
+  88%  { opacity: 0.9;  transform: translateX(-50%) scaleY(0.93); }
+  100% { opacity: 0;    transform: translateX(-50%) scaleY(0.8); }
+}
+
+/* Commandment corner ornaments */
+.cmd { position: relative; }
+.cmd::before,
+.cmd::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-style: solid;
+  border-color: rgba(122,10,10,0.4);
+  transition: width 0.35s ease, height 0.35s ease, border-color 0.35s ease;
+}
+.cmd::before { top: 8px;    left: 8px;    border-width: 1px 0 0 1px; }
+.cmd::after  { bottom: 8px; right: 8px;   border-width: 0 1px 1px 0; }
+.cmd:hover::before,
+.cmd:hover::after {
+  width: 20px;
+  height: 20px;
+  border-color: rgba(196,24,24,0.72);
+}
+.cmd-num { transition: text-shadow 0.5s ease; }
+.cmd:hover .cmd-num {
+  text-shadow: 0 0 16px rgba(196,24,24,0.9), 0 0 38px rgba(196,24,24,0.35);
+}
+
+/* Portal scroll reveal — uses existing transition: all 0.5s */
+.portal { opacity: 0; }
+.portal.revealed { opacity: 1; }
+
+/* Section scroll reveal */
+.ritual,
+.litany {
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+.section-revealed { opacity: 1; }
+
+/* Congregation counter pulse */
+@keyframes soulPulse {
+  0%   { color: var(--parchment); }
+  40%  { color: #ff6640; text-shadow: 0 0 22px rgba(255,100,64,0.85); }
+  100% { color: var(--parchment); }
+}
+#souls.pulsing { animation: soulPulse 1.3s ease-out forwards; }
+
+</style>
 </head>
 <body>
-<div id="root"></div>
-<script type="module" src="/src/main.tsx"></script>
+
+<!-- ═══════════ GATE ═══════════ -->
+<div id="gate">
+  <canvas class="gate-static" id="gateStatic"></canvas>
+  <div class="gate-vignette"></div>
+  <div class="gate-watcher" aria-hidden="true">
+    <img class="gate-watcher-img" src="assets/merken.png" alt="">
+  </div>
+  <div class="eye-glare" aria-hidden="true"></div>
+  <button class="gate-close" onclick="enterNave()" title="Skip entrance">× skip</button>
+
+  <!-- Gothic arch backdrop -->
+  <div class="arch-wrap" aria-hidden="true">
+    <svg viewBox="0 0 520 640" fill="none" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <path d="M30 640 L30 260 Q260 10 490 260 L490 640" stroke="#7a0a0a" stroke-width="1.4" opacity="0.7"/>
+      <path d="M54 640 L54 272 Q260 44 466 272 L466 640" stroke="#3a0505" stroke-width="0.9" opacity="0.6"/>
+      <path d="M80 640 L80 286 Q260 80 440 286 L440 640" stroke="#2a0404" stroke-width="0.6" opacity="0.5"/>
+      <line x1="30" y1="400" x2="54" y2="400" stroke="#5a0808" stroke-width="0.8" opacity="0.6"/>
+      <line x1="466" y1="400" x2="490" y2="400" stroke="#5a0808" stroke-width="0.8" opacity="0.6"/>
+      <line x1="30" y1="500" x2="54" y2="500" stroke="#5a0808" stroke-width="0.8" opacity="0.5"/>
+      <line x1="466" y1="500" x2="490" y2="500" stroke="#5a0808" stroke-width="0.8" opacity="0.5"/>
+      <path d="M242 28 L260 8 L278 28 L270 36 L260 28 L250 36 Z" stroke="#5a0808" stroke-width="0.8" fill="none" opacity="0.6"/>
+      <rect x="22" y="580" width="16" height="60" stroke="#3a0505" stroke-width="0.8" fill="none" opacity="0.4"/>
+      <rect x="482" y="580" width="16" height="60" stroke="#3a0505" stroke-width="0.8" fill="none" opacity="0.4"/>
+      <path d="M18 580 L22 570 L38 570 L42 580" stroke="#3a0505" stroke-width="0.8" fill="none" opacity="0.5"/>
+      <path d="M478 580 L482 570 L498 570 L502 580" stroke="#3a0505" stroke-width="0.8" fill="none" opacity="0.5"/>
+      <circle cx="260" cy="52" r="6" stroke="#5a0808" stroke-width="0.7" fill="none" opacity="0.5"/>
+      <circle cx="248" cy="64" r="5" stroke="#3a0505" stroke-width="0.6" fill="none" opacity="0.4"/>
+      <circle cx="272" cy="64" r="5" stroke="#3a0505" stroke-width="0.6" fill="none" opacity="0.4"/>
+    </svg>
+  </div>
+
+  <div class="gate-inner">
+    <div class="logo-wrap">
+      <img class="logo-img" src="assets/merken.png" alt="Merken — Church of Decay">
+    </div>
+    <div class="gate-whisper" id="whisper">the veil is thin tonight</div>
+    <h1 class="gate-title">Church of Decay</h1>
+    <div class="gate-latin">· Ecclesia Putredinis ·</div>
+    <div class="gate-prompt">the faithful gather below</div>
+    <button class="gate-button" id="enterBtn">Enter the Nave</button>
+    <div class="gate-warning">mind the red floor · turn back if unwilling</div>
+  </div>
+</div>
+
+<!-- ═══════════ MAIN STAGE ═══════════ -->
+<div id="stage">
+
+  <div class="cathedral" aria-hidden="true">
+    <div class="scene">
+    <!-- Architectural backdrop: pointed arches & pillars -->
+    <svg class="arches" viewBox="0 0 1600 2700" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <linearGradient id="stoneG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"  stop-color="#2a1210" stop-opacity="0.9"/>
+          <stop offset="50%" stop-color="#140606" stop-opacity="0.85"/>
+          <stop offset="100%" stop-color="#050101" stop-opacity="1"/>
+        </linearGradient>
+        <radialGradient id="archGlow" cx="50%" cy="80%" r="50%">
+          <stop offset="0%" stop-color="#c41818" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#c41818" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="pillarG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"  stop-color="#1a0808"/>
+          <stop offset="100%" stop-color="#050101"/>
+        </linearGradient>
+      </defs>
+
+      <!-- ═══ Roof vault — gothic vaulted ceiling (y=0–900) ═══ -->
+      <g id="roof-vault">
+        <defs>
+          <!-- Ceiling stone gradient — warmer/lighter near the skylight -->
+          <radialGradient id="vaultCeil" cx="800" cy="558" r="700" gradientUnits="userSpaceOnUse">
+            <stop offset="0%"   stop-color="#240909"/>
+            <stop offset="45%"  stop-color="#110404"/>
+            <stop offset="100%" stop-color="#070101"/>
+          </radialGradient>
+
+          <!-- Glow halo around skylight opening -->
+          <radialGradient id="bossHalo" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stop-color="#c41818" stop-opacity="0.30"/>
+            <stop offset="100%" stop-color="#c41818" stop-opacity="0"/>
+          </radialGradient>
+          <!-- Bottom fade into arch section -->
+          <linearGradient id="vaultFade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="#070101" stop-opacity="0"/>
+            <stop offset="53%"  stop-color="#070101" stop-opacity="0.92"/>
+            <stop offset="100%" stop-color="#070101" stop-opacity="0.06"/>
+          </linearGradient>
+          <!-- Glow filter: blurred copy beneath crisp line = light halo -->
+          <filter id="ribGlow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="1.4" result="blur"/>
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          <!-- Mask: ribs are hidden inside the oculus so they stop cleanly at the skylight ring -->
+          <mask id="ribMask">
+            <rect x="0" y="0" width="1600" height="900" fill="white"/>
+            <circle cx="800" cy="558" r="230" fill="black"/>
+          </mask>
+        </defs>
+
+        <!-- Dark stone ceiling surface -->
+        <rect x="0" y="0" width="1600" height="900" fill="url(#vaultCeil)"/>
+
+        <!-- ── Rib vault: 8 primary ribs, masked to stop at oculus ── -->
+        <g mask="url(#ribMask)" filter="url(#ribGlow)" stroke="#7a2424" stroke-width="1.6" fill="none" opacity="0.38">
+          <animate attributeName="opacity" values="0.38;0.56;0.38" dur="8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+          <animate attributeName="stroke-width" values="1.6;2.1;1.6" dur="8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+          <!-- Straight up -->
+          <path d="M 800 558 Q 800 110 800 0"/>
+          <!-- Upper-right -->
+          <path d="M 800 558 Q 1090 110 1400 0"/>
+          <!-- Right -->
+          <path d="M 800 558 Q 1320 252 1600 240"/>
+          <!-- Lower-right -->
+          <path d="M 800 558 Q 1090 600 1400 900"/>
+          <!-- Straight down -->
+          <path d="M 800 558 Q 800 620 800 900"/>
+          <!-- Lower-left -->
+          <path d="M 800 558 Q 510 600 200 900"/>
+          <!-- Left -->
+          <path d="M 800 558 Q 280 252 0 240"/>
+          <!-- Upper-left -->
+          <path d="M 800 558 Q 510 110 200 0"/>
+        </g>
+
+        <!-- ── Rib vault: 8 secondary (tierceron) ribs ── -->
+        <g mask="url(#ribMask)" filter="url(#ribGlow)" stroke="#4e1818" stroke-width="1.0" fill="none" opacity="0.35">
+          <animate attributeName="opacity" values="0.35;0.52;0.35" dur="11s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+          <animate attributeName="stroke-width" values="1.0;1.5;1.0" dur="11s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+          <!-- Between up and upper-right -->
+          <path d="M 800 558 Q 930 90 1100 0"/>
+          <!-- Between upper-right and right -->
+          <path d="M 800 558 Q 1240 140 1600 80"/>
+          <!-- Between right and lower-right -->
+          <path d="M 800 558 Q 1360 430 1600 560"/>
+          <!-- Between lower-right and down -->
+          <path d="M 800 558 Q 1060 760 1240 900"/>
+          <!-- Between down and lower-left -->
+          <path d="M 800 558 Q 540 760 360 900"/>
+          <!-- Between lower-left and left -->
+          <path d="M 800 558 Q 240 430 0 560"/>
+          <!-- Between left and upper-left -->
+          <path d="M 800 558 Q 160 140 0 80"/>
+          <!-- Between upper-left and up -->
+          <path d="M 800 558 Q 670 90 500 0"/>
+        </g>
+
+        <!-- ── Oculus collar — stone ring framing the skylight ── -->
+        <circle cx="800" cy="558" r="230" fill="none" stroke="#6a2020" stroke-width="3.5" opacity="0.9"/>
+        <circle cx="800" cy="558" r="190" fill="none" stroke="#4a1616" stroke-width="1.2" opacity="0.5"/>
+
+<!-- Warm glow halo around the skylight opening -->
+        <ellipse cx="800" cy="558" rx="260" ry="190" fill="url(#bossHalo)"/>
+
+        <!-- Bottom transition — fade into the arch section below -->
+        <rect x="0" y="566" width="1600" height="584" fill="url(#vaultFade)"/>
+
+      </g><!-- end #roof-vault -->
+
+      <g transform="translate(0, 900)"><!-- parallax scene band -->
+      <!-- Ceiling seam blend — rises from arch top to meet the ceiling fade -->
+      <defs>
+        <linearGradient id="ceilBlend" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#070101" stop-opacity="0.88"/>
+          <stop offset="100%" stop-color="#070101" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="1600" height="280" fill="url(#ceilBlend)"/>
+      <!-- Back arches — symmetric around vertical center x=800 -->
+      <!-- Center arch 700-900, mid pair 400-600 / 1000-1200, outer pair 100-300 / 1300-1500 -->
+      <g opacity="0.78" filter="blur(0.8px)">
+        <path d="M 100 900 L 100 400 Q 200 250 300 400 L 300 900 Z" fill="url(#stoneG)"/>
+        <path d="M 400 900 L 400 380 Q 500 230 600 380 L 600 900 Z" fill="url(#stoneG)"/>
+        <path d="M 700 900 L 700 360 Q 800 200 900 360 L 900 900 Z" fill="url(#stoneG)"/>
+        <path d="M 1000 900 L 1000 380 Q 1100 230 1200 380 L 1200 900 Z" fill="url(#stoneG)"/>
+        <path d="M 1300 900 L 1300 400 Q 1400 250 1500 400 L 1500 900 Z" fill="url(#stoneG)"/>
+      </g>
+
+      <!-- Side pillars removed — arches alone define the backdrop -->
+
+      <!-- Hanging banners — design matched to reference image -->
+      <defs>
+        <linearGradient id="emberFrame" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"  stop-color="#ffb347"/>
+          <stop offset="50%" stop-color="#ff6a1e"/>
+          <stop offset="100%" stop-color="#c44418"/>
+        </linearGradient>
+        <linearGradient id="emblemG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"  stop-color="#ffc070"/>
+          <stop offset="60%" stop-color="#e06030"/>
+          <stop offset="100%" stop-color="#8a2a10"/>
+        </linearGradient>
+        <linearGradient id="bannerClothG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"  stop-color="#4a0808"/>
+          <stop offset="50%" stop-color="#6a1010"/>
+          <stop offset="100%" stop-color="#3a0505"/>
+        </linearGradient>
+        <symbol id="codBanner" viewBox="0 0 100 260">
+          <!-- Cloth -->
+          <path d="M 0 0 L 100 0 L 100 220 L 50 260 L 0 220 Z" fill="url(#bannerClothG)"/>
+          <!-- Ember frame (double inset, thin bright line) -->
+          <path d="M 6 8 L 94 8 L 94 218 L 50 253 L 6 218 Z"
+                fill="none" stroke="url(#emberFrame)" stroke-width="2.5"
+                style="filter: drop-shadow(0 0 4px rgba(255,110,40,0.9));"/>
+          <path d="M 10 12 L 90 12 L 90 216 L 50 248 L 10 216 Z"
+                fill="none" stroke="#ffb870" stroke-width="0.6" opacity="0.65"/>
+          <!-- Emblem: actual artwork, cropped from reference -->
+          <image href="assets/emblem.png" x="10" y="30" width="80" height="95" preserveAspectRatio="xMidYMid meet"/>
+        </symbol>
+      </defs>
+
+      <!-- Banners hang centered on the 2nd-from-outer arches (x=500 and x=1100), symmetric around page center x=800.
+           Rope length increased 0.5x — chain now runs 0 → 270, banner top at y=270. -->
+      <!-- Left chain + banner — centered on x=500 -->
+      <g style="transform-origin: 500px 0; animation: bannerSway 8s ease-in-out infinite;">
+        <path d="M 500 0 L 500 270" stroke="#1a0e06" stroke-width="2"/>
+        <g fill="none" stroke="#2a1810" stroke-width="1">
+          <circle cx="500" cy="12"  r="2.5"/>
+          <circle cx="500" cy="28"  r="2.5"/>
+          <circle cx="500" cy="44"  r="2.5"/>
+          <circle cx="500" cy="60"  r="2.5"/>
+          <circle cx="500" cy="76"  r="2.5"/>
+          <circle cx="500" cy="92"  r="2.5"/>
+          <circle cx="500" cy="108" r="2.5"/>
+          <circle cx="500" cy="124" r="2.5"/>
+          <circle cx="500" cy="140" r="2.5"/>
+          <circle cx="500" cy="156" r="2.5"/>
+          <circle cx="500" cy="172" r="2.5"/>
+          <circle cx="500" cy="188" r="2.5"/>
+          <circle cx="500" cy="204" r="2.5"/>
+          <circle cx="500" cy="220" r="2.5"/>
+          <circle cx="500" cy="236" r="2.5"/>
+          <circle cx="500" cy="252" r="2.5"/>
+        </g>
+        <use href="#codBanner" x="450" y="270" width="100" height="260"/>
+      </g>
+      <!-- Right chain + banner — centered on x=1100 (mirror) -->
+      <g style="transform-origin: 1100px 0; animation: bannerSway 9s ease-in-out infinite reverse;">
+        <path d="M 1100 0 L 1100 270" stroke="#1a0e06" stroke-width="2"/>
+        <g fill="none" stroke="#2a1810" stroke-width="1">
+          <circle cx="1100" cy="12"  r="2.5"/>
+          <circle cx="1100" cy="28"  r="2.5"/>
+          <circle cx="1100" cy="44"  r="2.5"/>
+          <circle cx="1100" cy="60"  r="2.5"/>
+          <circle cx="1100" cy="76"  r="2.5"/>
+          <circle cx="1100" cy="92"  r="2.5"/>
+          <circle cx="1100" cy="108" r="2.5"/>
+          <circle cx="1100" cy="124" r="2.5"/>
+          <circle cx="1100" cy="140" r="2.5"/>
+          <circle cx="1100" cy="156" r="2.5"/>
+          <circle cx="1100" cy="172" r="2.5"/>
+          <circle cx="1100" cy="188" r="2.5"/>
+          <circle cx="1100" cy="204" r="2.5"/>
+          <circle cx="1100" cy="220" r="2.5"/>
+          <circle cx="1100" cy="236" r="2.5"/>
+          <circle cx="1100" cy="252" r="2.5"/>
+        </g>
+        <use href="#codBanner" x="1050" y="270" width="100" height="260"/>
+      </g>
+
+      <!-- ═══ Caged hanging lanterns — symmetric around x=800 ═══
+           Left at x=350, right at x=1250 (each 450 from center). -->
+      <defs>
+        <symbol id="cagedLantern" viewBox="0 0 80 140" overflow="visible">
+          <!-- Top hook/cap -->
+          <path d="M 36 0 L 44 0 L 46 6 L 34 6 Z" fill="#2a1810" stroke="#5a3414" stroke-width="0.8"/>
+          <!-- Small ring attach -->
+          <circle cx="40" cy="10" r="3" fill="none" stroke="#3a2414" stroke-width="1"/>
+          <!-- Outer iron cage (rectangular) -->
+          <rect x="18" y="16" width="44" height="64" rx="3" fill="#0a0604" stroke="#3a2414" stroke-width="1.5"/>
+          <!-- Vertical cage bars -->
+          <line x1="28" y1="16" x2="28" y2="80" stroke="#3a2414" stroke-width="1.2"/>
+          <line x1="40" y1="16" x2="40" y2="80" stroke="#3a2414" stroke-width="1.2"/>
+          <line x1="52" y1="16" x2="52" y2="80" stroke="#3a2414" stroke-width="1.2"/>
+          <!-- Horizontal cage ring -->
+          <line x1="18" y1="48" x2="62" y2="48" stroke="#3a2414" stroke-width="1"/>
+          <!-- Cage top cap plate -->
+          <rect x="14" y="14" width="52" height="5" fill="#1a0e06" stroke="#3a2414" stroke-width="0.8"/>
+          <!-- Cage bottom plate -->
+          <rect x="14" y="78" width="52" height="5" fill="#1a0e06" stroke="#3a2414" stroke-width="0.8"/>
+          <!-- Bottom spike -->
+          <path d="M 34 83 L 46 83 L 40 96 Z" fill="#1a0e06" stroke="#3a2414" stroke-width="0.8"/>
+          <!-- Inner ember glow (behind bars) -->
+          <ellipse cx="40" cy="48" rx="16" ry="24" fill="#ff6020" opacity="0.5" filter="blur(6px)"/>
+          <ellipse cx="40" cy="48" rx="8" ry="16" fill="#ffb347" opacity="0.85" filter="blur(2px)"/>
+          <ellipse cx="40" cy="50" rx="3" ry="8" fill="#fff1d0"/>
+          <!-- Outer halo -->
+          <circle cx="40" cy="48" r="36" fill="#ff8030" opacity="0.25" filter="blur(14px)"/>
+        </symbol>
+      </defs>
+
+      <!-- Left caged lantern — x=620, chain from roof -->
+      <g style="transform-origin: 620px 0; animation: bannerSway 7s ease-in-out infinite;">
+        <path d="M 620 0 L 620 225" stroke="#1a0e06" stroke-width="1.8"/>
+        <g fill="none" stroke="#2a1810" stroke-width="1">
+          <circle cx="620" cy="10"  r="2.2"/>
+          <circle cx="620" cy="24"  r="2.2"/>
+          <circle cx="620" cy="38"  r="2.2"/>
+          <circle cx="620" cy="52"  r="2.2"/>
+          <circle cx="620" cy="66"  r="2.2"/>
+          <circle cx="620" cy="80"  r="2.2"/>
+          <circle cx="620" cy="94"  r="2.2"/>
+          <circle cx="620" cy="108" r="2.2"/>
+          <circle cx="620" cy="122" r="2.2"/>
+          <circle cx="620" cy="136" r="2.2"/>
+          <circle cx="620" cy="150" r="2.2"/>
+          <circle cx="620" cy="164" r="2.2"/>
+          <circle cx="620" cy="178" r="2.2"/>
+          <circle cx="620" cy="192" r="2.2"/>
+          <circle cx="620" cy="206" r="2.2"/>
+          <circle cx="620" cy="220" r="2.2"/>
+        </g>
+        <use href="#cagedLantern" x="595" y="225" width="50" height="88"/>
+      </g>
+
+      <!-- Right caged lantern — x=980 (mirror) -->
+      <g style="transform-origin: 980px 0; animation: bannerSway 7.5s ease-in-out infinite reverse;">
+        <path d="M 980 0 L 980 225" stroke="#1a0e06" stroke-width="1.8"/>
+        <g fill="none" stroke="#2a1810" stroke-width="1">
+          <circle cx="980" cy="10"  r="2.2"/>
+          <circle cx="980" cy="24"  r="2.2"/>
+          <circle cx="980" cy="38"  r="2.2"/>
+          <circle cx="980" cy="52"  r="2.2"/>
+          <circle cx="980" cy="66"  r="2.2"/>
+          <circle cx="980" cy="80"  r="2.2"/>
+          <circle cx="980" cy="94"  r="2.2"/>
+          <circle cx="980" cy="108" r="2.2"/>
+          <circle cx="980" cy="122" r="2.2"/>
+          <circle cx="980" cy="136" r="2.2"/>
+          <circle cx="980" cy="150" r="2.2"/>
+          <circle cx="980" cy="164" r="2.2"/>
+          <circle cx="980" cy="178" r="2.2"/>
+          <circle cx="980" cy="192" r="2.2"/>
+          <circle cx="980" cy="206" r="2.2"/>
+          <circle cx="980" cy="220" r="2.2"/>
+        </g>
+        <use href="#cagedLantern" x="955" y="225" width="50" height="88"/>
+      </g>
+
+      <defs>
+        <!-- Wall torch — simple: thin metal pole from wall, wood torch, flame -->
+        <symbol id="wallTorch" viewBox="0 0 50 70">
+          <!-- Thin iron pole jutting out from wall (left edge) — shorter handle -->
+          <rect x="0" y="44" width="10" height="2" fill="#3a2010"/>
+          <!-- Wooden torch stick, angled up slightly -->
+          <rect x="8" y="34" width="3" height="16" fill="#4a2a14" stroke="#2a1408" stroke-width="0.4"/>
+          <!-- Wood grain hint -->
+          <line x1="9" y1="36" x2="9" y2="48" stroke="#2a1408" stroke-width="0.3" opacity="0.6"/>
+          <!-- Flame -->
+          <g style="transform-origin: 9.5px 32px; animation: bannerSway 1.6s ease-in-out infinite;">
+            <circle cx="9.5" cy="30" r="16" fill="#ff6020" opacity="0.35" filter="blur(6px)"/>
+            <circle cx="9.5" cy="30" r="9" fill="#ffa040" opacity="0.5" filter="blur(2.5px)"/>
+            <ellipse cx="9.5" cy="28" rx="4" ry="8" fill="#ff8030" filter="blur(0.6px)"/>
+            <ellipse cx="9.5" cy="27" rx="2.4" ry="5.5" fill="#ffb347"/>
+            <ellipse cx="9.5" cy="26" rx="1.2" ry="3.5" fill="#fff1d0"/>
+          </g>
+        </symbol>
+      </defs>
+
+      <!-- ═══ Wall torches — 3 per side, symmetric around x=800 ═══
+           Torch symbol viewBox 100x140 with mounting plate on its LEFT side and flame bundle to the upper-right.
+           Left-side torches: placed naturally.
+           Right-side torches: mirrored horizontally via scale(-1 1). -->
+      <g id="wall-torches" aria-hidden="true">
+        <!-- 2 torches per edge, randomized heights (varying distance between them) -->
+        <g transform="translate(100 0)">
+          <use href="#wallTorch" x="0" y="426" width="50" height="70"/>
+          <use href="#wallTorch" x="0" y="670" width="50" height="70"/>
+        </g>
+        <g transform="translate(300 0) scale(-1 1)">
+          <use href="#wallTorch" x="0" y="408" width="50" height="70"/>
+          <use href="#wallTorch" x="0" y="594" width="50" height="70"/>
+        </g>
+        <g transform="translate(400 0)">
+          <use href="#wallTorch" x="0" y="551" width="50" height="70"/>
+          <use href="#wallTorch" x="0" y="703" width="50" height="70"/>
+        </g>
+        <g transform="translate(600 0) scale(-1 1)">
+          <use href="#wallTorch" x="0" y="526" width="50" height="70"/>
+          <use href="#wallTorch" x="0" y="772" width="50" height="70"/>
+        </g>
+        <g transform="translate(700 0)">
+          <use href="#wallTorch" x="0" y="559" width="50" height="70"/>
+          <use href="#wallTorch" x="0" y="733" width="50" height="70"/>
+        </g>
+        <g transform="translate(900 0) scale(-1 1)">
+          <use href="#wallTorch" x="0" y="440" width="50" height="70"/>
+          <use href="#wallTorch" x="0" y="563" width="50" height="70"/>
+        </g>
+        <g transform="translate(1000 0)">
+          <use href="#wallTorch" x="0" y="456" width="50" height="70"/>
+          <use href="#wallTorch" x="0" y="753" width="50" height="70"/>
+        </g>
+        <g transform="translate(1200 0) scale(-1 1)">
+          <use href="#wallTorch" x="0" y="409" width="50" height="70"/>
+          <use href="#wallTorch" x="0" y="576" width="50" height="70"/>
+        </g>
+        <g transform="translate(1300 0)">
+          <use href="#wallTorch" x="0" y="550" width="50" height="70"/>
+          <use href="#wallTorch" x="0" y="735" width="50" height="70"/>
+        </g>
+        <g transform="translate(1500 0) scale(-1 1)">
+          <use href="#wallTorch" x="0" y="401" width="50" height="70"/>
+          <use href="#wallTorch" x="0" y="696" width="50" height="70"/>
+        </g>
+      </g>
+
+      </g><!-- end translate(0,900) -->
+
+      <!-- ═══ Church floor — below arch band ═══ -->
+      <g id="church-floor" aria-hidden="true">
+        <rect x="0" y="1820" width="1600" height="70" fill="url(#stoneG)" opacity="0.95"/>
+        <rect x="0" y="1888" width="1600" height="12" fill="#050101"/>
+      </g>
+
+      <!-- ═══ Stick figure walkers symbol ═══ -->
+      <defs>
+        <symbol id="stickFigure" viewBox="0 0 20 40">
+          <circle cx="10" cy="4" r="3.5" fill="none" stroke="#c9b98e" stroke-width="1.2"/>
+          <line x1="10" y1="7.5" x2="10" y2="24" stroke="#c9b98e" stroke-width="1.2"/>
+          <line x1="10" y1="13" x2="3"  y2="18" stroke="#c9b98e" stroke-width="1.2"/>
+          <line x1="10" y1="13" x2="17" y2="18" stroke="#c9b98e" stroke-width="1.2"/>
+          <line x1="10" y1="24" x2="4"  y2="34" stroke="#c9b98e" stroke-width="1.2"/>
+          <line x1="10" y1="24" x2="16" y2="34" stroke="#c9b98e" stroke-width="1.2"/>
+        </symbol>
+      </defs>
+
+      <!-- ═══ Monster text — bottom of scene ═══ -->
+      <defs>
+        <filter id="monsterGlow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="18" result="blur"/>
+          <feFlood flood-color="#7a0a0a" flood-opacity="0.7" result="color"/>
+          <feComposite in="color" in2="blur" operator="in" result="glow"/>
+          <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <text
+        x="800" y="2260"
+        text-anchor="middle"
+        font-family="UnifrakturCook, serif"
+        font-size="260"
+        fill="#5a0808"
+        opacity="0.9"
+        filter="url(#monsterGlow)"
+        aria-hidden="true">Merken</text>
+
+    </svg>
+
+    <!-- Rose window — horned skull skylight, stained glass mural -->
+    <svg class="rose" viewBox="0 0 400 400" aria-hidden="true">
+      <defs>
+        <clipPath id="roseClip">
+          <circle cx="200" cy="200" r="196"/>
+        </clipPath>
+        <!-- solid silhouette — covers glass behind skull -->
+        <mask id="roseFilledMask">
+          <image href="assets/skull-filled.png" x="10" y="5" width="380" height="390"
+            preserveAspectRatio="xMidYMid meet"/>
+        </mask>
+        <!-- original with detail holes — reveals structure on top -->
+        <mask id="roseMask">
+          <image href="assets/skull-horns.png" x="10" y="5" width="380" height="390"
+            preserveAspectRatio="xMidYMid meet"/>
+        </mask>
+      </defs>
+
+      <!-- Base fill -->
+      <circle cx="200" cy="200" r="200" fill="#060000"/>
+
+      <!-- Stained glass shards — irregular panes, each a distinct warm tone -->
+      <g clip-path="url(#roseClip)" stroke="#030000" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+        <!-- Outer ring -->
+        <polygon points="200,4 104,28 72,88 95,112 140,96 175,72 200,60"              fill="#6a0a0a"/>
+        <polygon points="200,4 200,60 225,72 260,96 305,112 328,88 296,28"            fill="#5c0808"/>
+        <polygon points="296,28 328,88 368,110 380,160 340,148 305,112"               fill="#7a1010"/>
+        <polygon points="396,200 380,160 340,148 318,188 338,220 380,240"             fill="#8c0c0c"/>
+        <polygon points="396,200 380,240 370,298 328,308 310,272 338,220"             fill="#741010"/>
+        <polygon points="370,298 296,372 260,344 278,306 310,272 328,308"             fill="#601010"/>
+        <polygon points="296,372 200,396 200,358 230,328 260,344"                     fill="#500808"/>
+        <polygon points="200,396 104,372 140,344 170,328 200,358"                     fill="#5a0a0a"/>
+        <polygon points="104,372 30,298 72,282 90,306 122,328 140,344"                fill="#6e0e0e"/>
+        <polygon points="30,298 4,200 60,180 82,212 72,252 72,282"                    fill="#7e1212"/>
+        <polygon points="4,200 30,102 72,122 60,180"                                  fill="#901414"/>
+        <polygon points="30,102 104,28 140,96 95,112 72,122"                          fill="#a01818"/>
+        <!-- Mid ring -->
+        <polygon points="175,72 200,60 225,72 240,110 220,138 200,130 180,138 160,110" fill="#c83010"/>
+        <polygon points="140,96 175,72 160,110 132,128 108,116 95,112"                fill="#b82a0a"/>
+        <polygon points="260,96 305,112 292,116 268,128 240,110 225,72"               fill="#c02818"/>
+        <polygon points="60,180 72,122 95,112 108,116 118,148 100,180 82,212"         fill="#a82010"/>
+        <polygon points="340,148 318,188 300,180 282,148 292,116 305,112 340,148"     fill="#b42010"/>
+        <polygon points="82,212 100,180 118,148 138,168 128,210 108,240 72,252"       fill="#941818"/>
+        <polygon points="318,188 338,220 328,252 292,242 272,210 282,148 300,180"     fill="#9c1c1c"/>
+        <polygon points="72,252 108,240 128,266 108,296 90,306 72,282"                fill="#841414"/>
+        <polygon points="292,242 328,252 310,272 278,306 272,282 272,266"             fill="#8c1818"/>
+        <polygon points="128,266 160,278 200,282 240,278 272,266 272,282 240,310 200,318 160,310 128,282" fill="#701010"/>
+        <!-- Inner shards (around skull medallion) — most vivid -->
+        <polygon points="180,138 200,130 220,138 228,158 200,165 172,158"             fill="#e04018"/>
+        <polygon points="228,158 240,180 232,208 218,220 200,225 190,200 200,165"     fill="#d03810"/>
+        <polygon points="172,158 200,165 190,200 180,222 162,210 160,180"             fill="#d83c12"/>
+        <polygon points="180,222 200,225 218,220 228,242 200,255 172,242"             fill="#c03010"/>
+        <polygon points="160,180 162,210 140,220 128,210 138,168"                     fill="#cc3818"/>
+        <polygon points="240,180 262,168 272,210 260,218 232,208"                     fill="#c42e14"/>
+        <polygon points="132,128 160,110 172,158 160,180 138,168 118,148"             fill="#d43a10"/>
+        <polygon points="268,128 282,148 262,168 240,180 228,158 240,110"             fill="#cc3010"/>
+      </g>
+
+      <!-- Lead came rings -->
+      <circle cx="200" cy="200" r="68"  fill="none" stroke="#020000" stroke-width="5"   clip-path="url(#roseClip)"/>
+      <circle cx="200" cy="200" r="132" fill="none" stroke="#020000" stroke-width="4.5" clip-path="url(#roseClip)"/>
+
+      <!-- Layer 1: black backing over exact skull silhouette — hides glass shards behind skull -->
+      <circle cx="200" cy="200" r="200" fill="#000000" mask="url(#roseFilledMask)" clip-path="url(#roseClip)"/>
+      <!-- Layer 2: dark crimson over skull body only — detail holes are transparent, revealing black from Layer 1 -->
+      <circle cx="200" cy="200" r="200" fill="#2a0404" mask="url(#roseMask)" clip-path="url(#roseClip)"/>
+
+      <!-- Outer border ring -->
+      <circle cx="200" cy="200" r="196" fill="none" stroke="#180202" stroke-width="5"/>
+    </svg>
+
+    <!-- Congregation walking at floor level -->
+    <div class="walkers" aria-hidden="true">
+      <div class="walker w1"><svg viewBox="0 0 20 40" xmlns="http://www.w3.org/2000/svg"><use href="#stickFigure"/></svg></div>
+      <div class="walker w2"><svg viewBox="0 0 20 40" xmlns="http://www.w3.org/2000/svg"><use href="#stickFigure"/></svg></div>
+      <div class="walker w3"><svg viewBox="0 0 20 40" xmlns="http://www.w3.org/2000/svg"><use href="#stickFigure"/></svg></div>
+      <div class="walker w4"><svg viewBox="0 0 20 40" xmlns="http://www.w3.org/2000/svg"><use href="#stickFigure"/></svg></div>
+      <div class="walker w5"><svg viewBox="0 0 20 40" xmlns="http://www.w3.org/2000/svg"><use href="#stickFigure"/></svg></div>
+    </div>
+
+    </div><!-- end .scene -->
+
+    <div class="fog-layer" style="display:none">
+    </div>
+  </div>
+
+
+  <div class="fog"></div>
+
+  <main>
+
+    <header class="topbar">
+      <div class="mark">
+        <svg class="mark-sigil" viewBox="0 0 24 24" fill="currentColor" style="color:var(--blood-bright)">
+          <path d="M12 1 L14 6 L20 6 L15 10 L17 16 L12 13 L7 16 L9 10 L4 6 L10 6 Z" stroke="currentColor" stroke-width="0.5" fill="none"/>
+          <circle cx="12" cy="11" r="2" fill="currentColor"/>
+        </svg>
+        <span>Ordo Merkenii</span>
+      </div>
+      <div class="anno">
+        <span>Anno Putredinis · <b id="year">MMXXVI</b></span>
+        <span>Congregation · <b id="souls">—</b></span>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="eyebrow">Worshippers of the Dead God</div>
+      <div class="hero-church">Church</div>
+      <div class="hero-of">— of —</div>
+      <div class="hero-decay">Decay</div>
+      <div class="hero-rose-gap"></div>
+
+      <div class="divider">
+        <span></span>
+        <svg class="divider-glyph" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/>
+        </svg>
+        <span></span>
+      </div>
+
+      <p class="hero-subtitle">
+        Beneath the Bonelands, where the antlered god lies sleeping and the stones weep rust — the faithful keep the long vigil. All decay is holy. All rot is prayer.
+      </p>
+    </section>
+
+    <section class="creed">
+      <p>
+        <span class="drop">M</span><span class="line">erken is not dead, only dreaming.</span><br>
+        <span class="line">We are the worms in his marrow,</span><br>
+        <span class="line">the candles in his ribs,</span><br>
+        <span class="line">the song in his hollow throat.</span><br>
+        <span class="line">When he wakes — we shall be his teeth.</span>
+      </p>
+    </section>
+
+    <div class="gates-label">— The Four Gates Lie Open —</div>
+
+    <section class="gates">
+
+      <a class="portal" href="https://www.roblox.com/games/5053514572/The-Bonelands" target="_blank" rel="noopener">
+        <div class="portal-roman">I</div>
+        <svg class="portal-icon" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.5">
+          <!-- Gate/door -->
+          <path d="M20 90 L20 40 Q50 10 80 40 L80 90 Z"/>
+          <path d="M28 90 L28 44 Q50 20 72 44 L72 90" stroke-width="1"/>
+          <line x1="50" y1="22" x2="50" y2="90"/>
+          <circle cx="50" cy="55" r="3" fill="currentColor"/>
+          <!-- flames -->
+          <path d="M10 88 q3 -10 0 -16 q6 4 4 16 Z" fill="currentColor" opacity="0.7"/>
+          <path d="M86 88 q3 -10 0 -16 q6 4 4 16 Z" fill="currentColor" opacity="0.7"/>
+        </svg>
+        <div class="portal-name">The Bonelands</div>
+        <div class="portal-latin">· Terra Ossium ·</div>
+        <div class="portal-desc">Descend into the sanctum. Take the robe. Kneel before the skull of the dead god.</div>
+        <div class="portal-enter">Enter the Game</div>
+      </a>
+
+      <a class="portal" href="https://churchdecay.fandom.com/wiki/Church_of_Decay_Wiki" target="_blank" rel="noopener">
+        <div class="portal-roman">II</div>
+        <svg class="portal-icon" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.5">
+          <!-- Tome -->
+          <path d="M20 22 L50 28 L80 22 L80 82 L50 88 L20 82 Z"/>
+          <line x1="50" y1="28" x2="50" y2="88"/>
+          <path d="M28 38 L44 41 M28 48 L44 51 M28 58 L44 61 M28 68 L44 71
+                   M56 41 L72 38 M56 51 L72 48 M56 61 L72 58 M56 71 L72 68" stroke-width="0.8"/>
+          <circle cx="50" cy="58" r="6" fill="currentColor" opacity="0.4"/>
+          <polygon points="50,52 54,60 50,68 46,60" fill="currentColor"/>
+        </svg>
+        <div class="portal-name">The Codex</div>
+        <div class="portal-latin">· Liber Putredinis ·</div>
+        <div class="portal-desc">All that is known, half-known, and whispered. The rites, the ranks, the long genealogy of rot.</div>
+        <div class="portal-enter">Open the Wiki</div>
+      </a>
+
+      <a class="portal" href="https://discord.gg/cDkQXxaP2A" target="_blank" rel="noopener">
+        <div class="portal-roman">III</div>
+        <svg class="portal-icon" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.5">
+          <!-- Chalice / communion -->
+          <path d="M30 20 L70 20 L66 45 Q50 62 34 45 Z"/>
+          <line x1="50" y1="62" x2="50" y2="78"/>
+          <path d="M36 78 L64 78 L60 86 L40 86 Z"/>
+          <!-- liquid -->
+          <path d="M34 24 L66 24 L64 38 Q50 50 36 38 Z" fill="currentColor" opacity="0.5"/>
+          <circle cx="44" cy="30" r="1.5" fill="currentColor"/>
+          <circle cx="56" cy="34" r="1" fill="currentColor"/>
+          <!-- drip -->
+          <path d="M50 62 Q50 68 48 72 Q50 74 52 72 Q50 68 50 62" fill="currentColor"/>
+        </svg>
+        <div class="portal-name">The Chalice</div>
+        <div class="portal-latin">· Communio ·</div>
+        <div class="portal-desc">Speak with the congregation. Share the cup. Trade prophecies in the hours before mass.</div>
+        <div class="portal-enter">Join Discord</div>
+      </a>
+
+      <a class="portal" href="https://www.roblox.com/communities/5917063/Church-of-Decay#!/about" target="_blank" rel="noopener">
+        <div class="portal-roman">IV</div>
+        <svg class="portal-icon" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.5">
+          <!-- Banner -->
+          <path d="M25 14 L75 14 L75 74 L50 88 L25 74 Z"/>
+          <path d="M30 20 L70 20 L70 70 L50 82 L30 70 Z" stroke-width="0.8"/>
+          <!-- Antlered skull -->
+          <ellipse cx="50" cy="48" rx="10" ry="13" fill="currentColor" opacity="0.3"/>
+          <path d="M42 40 q-6 -6 -10 -14 M58 40 q6 -6 10 -14
+                   M38 42 q-8 -2 -14 -8 M62 42 q8 -2 14 -8"/>
+          <circle cx="46" cy="46" r="1.8" fill="currentColor"/>
+          <circle cx="54" cy="46" r="1.8" fill="currentColor"/>
+          <path d="M46 56 L50 62 L54 56" stroke-width="1"/>
+        </svg>
+        <div class="portal-name">The Congregation</div>
+        <div class="portal-latin">· Fratres in Putre ·</div>
+        <div class="portal-desc">The official Roblox assembly. Rise in rank. Wear the robes of your order — white or black.</div>
+        <div class="portal-enter">Join Community</div>
+      </a>
+
+    </section>
+
+    <!-- Gothic divider -->
+    <div class="gothic-divider" aria-hidden="true">
+      <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+        <line x1="14" y1="3" x2="14" y2="25" stroke="#c41818" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="3" y1="14" x2="25" y2="14" stroke="#c41818" stroke-width="1.2" stroke-linecap="round"/>
+        <circle cx="14" cy="3"  r="2.2" fill="#c41818"/>
+        <circle cx="14" cy="25" r="2.2" fill="#c41818"/>
+        <circle cx="3"  cy="14" r="2.2" fill="#c41818"/>
+        <circle cx="25" cy="14" r="2.2" fill="#c41818"/>
+        <circle cx="14" cy="14" r="3.5" fill="#c41818"/>
+      </svg>
+    </div>
+
+    <!-- ═══════════ RITUAL: The Ledger ═══════════ -->
+    <section class="ritual">
+      <div class="ritual-eyebrow">Rite of the Inscription</div>
+      <h2 class="ritual-title">Sign the Ledger<br>of the Faithful.</h2>
+      <p class="ritual-sub">Every soul that descends is written in the book. Take up the quill. Let your name bleed into the vellum — and the gate shall open.</p>
+
+      <div class="ledger-stage is-closed" id="ledgerStage" aria-label="The Ledger">
+        <!-- Ambient book glow -->
+        <div class="ledger-glow"></div>
+
+        <!-- The ledger itself -->
+        <div class="ledger-book">
+          <div class="ledger-spine"></div>
+          <div class="ledger-page ledger-page--left">
+            <div class="ledger-page-head">Anno Putredinis · MMXXVI</div>
+            <ol class="ledger-entries" id="ledgerEntriesLeft"></ol>
+          </div>
+          <div class="ledger-page ledger-page--right">
+            <div class="ledger-page-head">Those who descend</div>
+            <ol class="ledger-entries" id="ledgerEntriesRight"></ol>
+
+            <!-- The active signing line -->
+            <div class="ledger-sign-row" id="ledgerSignRow">
+              <span class="ledger-sign-number" id="ledgerSignNumber">…</span>
+              <div class="ledger-sign-slot">
+                <span class="ledger-cursor" id="ledgerCursor"></span>
+                <input id="ledgerInput" class="ledger-input" type="text" maxlength="28"
+                       placeholder="inscribe thy name…" autocomplete="off" spellcheck="false"/>
+                <span class="ledger-rendered" id="ledgerRendered"></span>
+                <span class="ledger-ink-blot" id="ledgerInkBlot"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="ledger-sign-btn" id="ledgerSignBtn" type="button" aria-label="Sign the ledger">
+        <span>✦ Sign in Rust ✦</span>
+      </button>
+
+    </section>
+
+    <!-- Gothic divider -->
+    <div class="gothic-divider" aria-hidden="true">
+      <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+        <line x1="14" y1="3" x2="14" y2="25" stroke="#c41818" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="3" y1="14" x2="25" y2="14" stroke="#c41818" stroke-width="1.2" stroke-linecap="round"/>
+        <circle cx="14" cy="3"  r="2.2" fill="#c41818"/>
+        <circle cx="14" cy="25" r="2.2" fill="#c41818"/>
+        <circle cx="3"  cy="14" r="2.2" fill="#c41818"/>
+        <circle cx="25" cy="14" r="2.2" fill="#c41818"/>
+        <circle cx="14" cy="14" r="3.5" fill="#c41818"/>
+      </svg>
+    </div>
+
+    <!-- ═══════════ LITANY ═══════════ -->
+    <section class="litany">
+      <div class="litany-head">
+        <div class="eyebrow">Five Observances</div>
+        <h2>The Litany of Rot</h2>
+      </div>
+      <div class="commandments">
+        <div class="cmd"><div class="cmd-num">I</div><div class="cmd-text"><b>De Carne</b>All flesh is borrowed. Return it with interest — with song, with suffering, with salt.</div></div>
+        <div class="cmd"><div class="cmd-num">II</div><div class="cmd-text"><b>De Silentio</b>Speak only in the chapel, and only in whispers. The god hears best what is barely said.</div></div>
+        <div class="cmd"><div class="cmd-num">III</div><div class="cmd-text"><b>De Vigilia</b>Keep a candle burning through the dark hours. A flame that fails is a vow unkept.</div></div>
+        <div class="cmd"><div class="cmd-num">IV</div><div class="cmd-text"><b>De Sanguine</b>The red floor receives all. Do not wipe it clean; it is not stain, it is memory.</div></div>
+        <div class="cmd"><div class="cmd-num">V</div><div class="cmd-text"><b>De Ossibus</b>Honour the bone above the flesh — for bone remembers shape long after the body forgets.</div></div>
+        <div class="cmd"><div class="cmd-num">VI</div><div class="cmd-text"><b>De Somno</b>When Merken stirs in his sleep, kneel. When he breathes, chant. When he dreams of you, do not flinch.</div></div>
+      </div>
+    </section>
+
+  </main>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="sig">✦ · ✦ · ✦</div>
+    <div class="footer-line">Ordo Merkenii · Anno Putredinis MMXXVI · An unofficial reliquary of the congregation</div>
+    <div class="disclaimer">
+      Church of Decay is a Roblox horror role-play experience. This reliquary is an independent work of devotion assembled by the congregation — not affiliated with or endorsed by Roblox Corporation. All marks and titles belong to their respective custodians.
+    </div>
+  </div>
+</footer>
+
+<!-- flash overlay -->
+<div id="flash"></div>
+
+<div class="quill" id="quill" aria-hidden="true">
+  <img src="assets/quill_cursor.png" width="90" height="90" alt="">
+</div>
+
+<script>
+// ═════════════════ RUNTIME ═════════════════
+
+const state = { ...DEFAULTS };
+let quillWriteTimer;
+let sceneUpdate;
+
+// Force-restart a CSS animation by toggling a class off, flushing layout, then toggling it back on.
+function restartAnim(el, className) {
+  el.classList.remove(className);
+  void el.offsetWidth; // reflow to reset animation state
+  el.classList.add(className);
+}
+
+function applyState() {
+  const root = document.documentElement;
+  root.style.setProperty('--grain-op', state.grainOpacity);
+  root.style.setProperty('--fog-op', state.fogDensity);
+  root.style.setProperty('--bpm', state.heartbeatBpm);
+
+  // Blood hue — now affects the ENTIRE page via a global hue-rotate filter
+  // bloodHue slider now maps directly to a rotation in degrees
+  const hueShift = state.bloodHue;
+  // compute oklch hue that matches (red ≈ 25° in oklch, shift from there)
+  const oklchHue = 25 + hueShift;
+  root.style.setProperty('--blood',        `oklch(0.38 0.20 ${oklchHue})`);
+  root.style.setProperty('--blood-bright', `oklch(0.58 0.24 ${oklchHue})`);
+  root.style.setProperty('--ember',        `oklch(0.72 0.22 ${oklchHue + 15})`);
+  root.style.setProperty('--blood-deep',   `oklch(0.22 0.14 ${oklchHue})`);
+
+  // Apply hue rotation to content only — NOT to #stage itself.
+  // Applying filter to #stage would create a new containing block for the
+  // position:fixed atmospheric effects (cathedral, rose, fog), making them
+  // scroll with the document instead of staying viewport-fixed (Firefox bug).
+  const gate      = document.getElementById('gate');
+  const stageMain = document.querySelector('#stage main');
+  const filt      = `hue-rotate(${hueShift * 6}deg)`;
+  if (stageMain) stageMain.style.filter = filt;
+  if (gate)      gate.style.filter      = filt;
+
+  // Fog: opacity + blur
+  document.querySelectorAll('.fog-blob').forEach(b => {
+    b.style.filter = `blur(${20 + state.fogDensity * 20}px)`;
+  });
+
+  // Grain: opacity AND saturation
+  // (already bound via --grain-op, nothing more needed)
+
+  // Display font
+  document.querySelectorAll('.hero-church, .hero-decay, .portal-name, .ritual-side h2, .litany-head h2, .gate-title, .cmd-num')
+    .forEach(el => el.style.fontFamily = `"${state.displayFont}", serif`);
+}
+applyState();
+
+// ── Whisper cycling on gate
+const whispers = [
+  'the veil is thin tonight',
+  'all flesh returns to the earth',
+  'come, faithful, come',
+  'the dead walk among us',
+  'give yourself to the rot',
+  'kneel before the skull of the dead god',
+  'something beneath the stones is breathing',
+  'do not count the candles',
+  'he remembers your name',
+  'the red floor is still wet'
+];
+let wi = 0;
+const whisperEl = document.getElementById('whisper');
+setInterval(() => {
+  if (!whisperEl) return;
+  whisperEl.style.opacity = '0';
+  setTimeout(() => {
+    wi = (wi + 1) % whispers.length;
+    whisperEl.textContent = whispers[wi];
+    whisperEl.style.opacity = '1';
+  }, 650);
+}, 4000);
+
+// ── Position eye glares over skull image
+(function positionGlares() {
+  const img = document.querySelector('.gate-watcher-img');
+  const glares = document.querySelectorAll('.eye-glare');
+  if (!img || !glares.length) return;
+  // x/y as fractions of the image rect — tweak these to land on the eyes
+  const eyes = [
+    { x: 0.495, y: 0.51 },
+  ];
+  function place() {
+    const r = img.getBoundingClientRect();
+    eyes.forEach((e, i) => {
+      if (!glares[i]) return;
+      glares[i].style.left = (r.left + e.x * r.width)  + 'px';
+      glares[i].style.top  = (r.top  + e.y * r.height) + 'px';
+    });
+  }
+  img.complete ? place() : img.addEventListener('load', place);
+})();
+
+// ── Snow static intro
+(function gateStatic() {
+  const canvas = document.getElementById('gateStatic');
+  if (!canvas) return;
+  canvas.width = 320;
+  canvas.height = 180;
+  const ctx = canvas.getContext('2d');
+  let start = null;
+  const duration = 325;
+  function drawNoise(ts) {
+    if (!start) start = ts;
+    const elapsed = ts - start;
+    if (elapsed >= duration) {
+      canvas.style.opacity = '0';
+      setTimeout(() => canvas.remove(), 375);
+      return;
+    }
+    const img = ctx.createImageData(320, 180);
+    const d = img.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const v = Math.random() * 255 | 0;
+      d[i]   = v;
+      d[i+1] = (v * 0.09) | 0;
+      d[i+2] = (v * 0.07) | 0;
+      d[i+3] = Math.random() > 0.22 ? 255 : 15;
+    }
+    ctx.putImageData(img, 0, 0);
+    requestAnimationFrame(drawNoise);
+  }
+  requestAnimationFrame(drawNoise);
+})();
+
+// ── Ember particles on gate
+(function spawnEmbers() {
+  const gateEl = document.getElementById('gate');
+  if (!gateEl) return;
+  for (let i = 0; i < 22; i++) {
+    const e = document.createElement('div');
+    e.className = 'ember';
+    const size = 1 + Math.random() * 2.5;
+    e.style.cssText = [
+      `left:${15 + Math.random() * 70}%`,
+      `bottom:${Math.random() * 35}%`,
+      `width:${size}px`,
+      `height:${size}px`,
+      `--dx:${(Math.random() - 0.5) * 80}px`,
+      `animation-duration:${3 + Math.random() * 3}s`,
+      `animation-delay:${0.5 + Math.random() * 5}s`
+    ].join(';');
+    gateEl.appendChild(e);
+  }
+})();
+
+// ── "Congregation" count — ticks up slowly
+const baseSouls = 6631;
+const soulsEl = document.getElementById('souls');
+let souls = baseSouls + Math.floor(Math.random() * 40);
+soulsEl.textContent = souls.toLocaleString();
+function tickSouls() {
+  const prev = souls;
+  if (Math.random() < 0.35) souls += Math.random() < 0.5 ? 1 : 0;
+  if (Math.random() < 0.05) souls -= 1;
+  if (souls !== prev) {
+    soulsEl.textContent = souls.toLocaleString();
+    restartAnim(soulsEl, 'pulsing');
+    soulsEl.addEventListener('animationend', () => soulsEl.classList.remove('pulsing'), { once: true });
+  }
+}
+setInterval(tickSouls, 2400);
+
+// ── Enter-the-Nave gate
+const gate = document.getElementById('gate');
+const stage = document.getElementById('stage');
+const flash = document.getElementById('flash');
+
+function enterNave() {
+  flash.classList.add('on');
+  setTimeout(() => {
+    gate.classList.add('dissolved');
+    stage.classList.add('revealed');
+    setTimeout(() => flash.classList.remove('on'), 500);
+    initCreedReveal();
+    sceneUpdate?.();
+  }, 350);
+}
+
+// If user has already entered this session, skip gate
+if (sessionStorage.getItem('cod_entered') === '1') {
+  gate.style.display = 'none';
+  stage.classList.add('revealed');
+  setTimeout(() => { initCreedReveal(); }, 100);
+} else {
+  document.getElementById('enterBtn').addEventListener('click', () => {
+    sessionStorage.setItem('cod_entered', '1');
+    enterNave();
+  });
+}
+
+// ── Creed line reveal on scroll
+function initCreedReveal() {
+  const lines = document.querySelectorAll('.creed .line');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        Array.from(lines).forEach((l, i) => {
+          setTimeout(() => l.classList.add('lit'), i * 500);
+        });
+        io.disconnect();
+      }
+    });
+  }, { threshold: 0.4 });
+  if (lines[0]) io.observe(lines[0].closest('.creed'));
+}
+
+// ── LEDGER: Rite of the Inscription ──────────────────────────
+const ledgerStage = document.getElementById('ledgerStage');
+const ledgerInput = document.getElementById('ledgerInput');
+const ledgerRendered = document.getElementById('ledgerRendered');
+const ledgerBlot = document.getElementById('ledgerInkBlot');
+const ledgerSignBtn = document.getElementById('ledgerSignBtn');
+const ledgerSignNumber = document.getElementById('ledgerSignNumber');
+const quillEl = document.getElementById('quill');
+
+const GAME_URL = 'https://www.roblox.com/games/5053514572/The-Bonelands';
+
+// Populate ledger with atmospheric fake entries — two pages
+const FAKE_NAMES_LEFT = [
+  'Brother Ash',
+  'Sister Caela',
+  'Tomas, hollow',
+  'Ninth Rot',
+  'Hesper of Wax',
+  'The Nameless III',
+  'Orin Low-Chant'
+];
+const FAKE_NAMES_RIGHT = [
+  'Merrow-Teeth',
+  'Black-cloak Ilya',
+  'The twice-signed',
+  'Dagen, bone-keep',
+  'Sister Rue'
+];
+
+function appendNames(names, container, oldIndices) {
+  names.forEach((n, i) => {
+    const li = document.createElement('li');
+    li.textContent = n;
+    if (oldIndices.includes(i)) li.classList.add('old');
+    container.appendChild(li);
+  });
+}
+function buildLedgerEntries() {
+  const left = document.getElementById('ledgerEntriesLeft');
+  const right = document.getElementById('ledgerEntriesRight');
+  if (!left || !right) return;
+  appendNames(FAKE_NAMES_LEFT,  left,  [1, 4, 6]);
+  appendNames(FAKE_NAMES_RIGHT, right, [2]);
+  const next = FAKE_NAMES_LEFT.length + FAKE_NAMES_RIGHT.length + 1;
+  ledgerSignNumber.textContent = toRoman(next) + '.';
+}
+function toRoman(num) {
+  const map = [['M',1000],['CM',900],['D',500],['CD',400],['C',100],['XC',90],['L',50],['XL',40],['X',10],['IX',9],['V',5],['IV',4],['I',1]];
+  let r = '';
+  for (const [s, v] of map) { while (num >= v) { r += s; num -= v; } }
+  return r;
+}
+buildLedgerEntries();
+
+// ── Ledger state machine ──────────────────────────────────────
+let ledgerState = 'closed';
+const STATE_CLASSES = ['is-closed', 'is-opening', 'is-idle', 'is-typing', 'is-signed'];
+
+function transitionTo(state) {
+  ledgerState = state;
+  STATE_CLASSES.forEach(c => ledgerStage.classList.remove(c));
+  ledgerStage.classList.add('is-' + state);
+}
+
+// ── Open book when scrolled into view (fires once) ───────────
+if (ledgerStage) {
+  const openObserver = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if (en.isIntersecting && ledgerState === 'closed') {
+        transitionTo('opening');
+        openObserver.disconnect();
+        // Transition to idle when the right page finishes animating
+        const rightPage = ledgerStage.querySelector('.ledger-page--right');
+        rightPage.addEventListener('animationend', () => {
+          if (ledgerState === 'opening') transitionTo('idle');
+        }, { once: true });
+      }
+    });
+  }, { threshold: 0.5 });
+  openObserver.observe(ledgerStage);
+
+  // Click anywhere on the book while idle/typing focuses the input
+  ledgerStage.addEventListener('click', (e) => {
+    if (ledgerState === 'idle' || ledgerState === 'typing') {
+      if (e.target !== ledgerSignBtn && !ledgerSignBtn.contains(e.target)) {
+        ledgerInput.focus();
+      }
+    }
+  });
+}
+
+// ── Bone quill proximity cursor swap ─────────────────────────
+const NIB_OFFSET_X = 22;   // px from left of 44×90 image to nib tip (bottom-center)
+const NIB_OFFSET_Y = 88;   // px from top of 44×90 image to nib tip
+const QUILL_PROXIMITY = 120; // px distance from ledger stage that activates the quill
+
+function distToRect(x, y, r) {
+  const dx = Math.max(r.left - x, 0, x - r.right);
+  const dy = Math.max(r.top  - y, 0, y - r.bottom);
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+function hideQuill() {
+  document.body.classList.remove('near-ledger');
+  quillEl.style.transform = 'translate(-9999px, -9999px) rotate(0deg)';
+}
+
+document.addEventListener('mousemove', (e) => {
+  if (!ledgerStage || ledgerState === 'signed') {
+    hideQuill();
+    return;
+  }
+  const dist = distToRect(e.clientX, e.clientY, ledgerStage.getBoundingClientRect());
+
+  if (dist < QUILL_PROXIMITY) {
+    document.body.classList.add('near-ledger');
+    quillEl.style.transform =
+      `translate(${e.clientX - NIB_OFFSET_X}px, ${e.clientY - NIB_OFFSET_Y}px) rotate(0deg)`;
+  } else {
+    hideQuill();
+  }
+});
+
+// ── Render typed letters with ink-appearance animation ───────
+ledgerInput?.addEventListener('focus', () => {
+  if (ledgerState === 'idle') transitionTo('typing');
+});
+
+let renderedLen = 0;
+ledgerInput?.addEventListener('input', () => {
+  const val = ledgerInput.value;
+
+  if (val.length < renderedLen) {
+    // deletion — rebuild without animation
+    ledgerRendered.innerHTML = '';
+    for (const ch of val) {
+      const span = document.createElement('span');
+      span.className = 'letter';
+      span.style.animation = 'none';
+      span.style.opacity = '1';
+      span.textContent = ch;
+      ledgerRendered.appendChild(span);
+    }
+  } else {
+    // addition — only append new letters, no full rebuild
+    for (let i = renderedLen; i < val.length; i++) {
+      const span = document.createElement('span');
+      span.className = 'letter';
+      span.textContent = val[i];
+      span.style.animationDelay = ((i - renderedLen) * 0.04) + 's';
+      ledgerRendered.appendChild(span);
+    }
+  }
+  renderedLen = val.length;
+
+  // Trigger an ink-blot at start once per keystroke for drama
+  if (val.length > 0 && Math.random() < 0.4) {
+    restartAnim(ledgerBlot, 'visible');
+  }
+  quillEl.classList.add('writing');
+  clearTimeout(quillWriteTimer);
+  quillWriteTimer = setTimeout(() => quillEl.classList.remove('writing'), 450);
+
+  toggleSignBtn();
+});
+
+function toggleSignBtn() {
+  ledgerSignBtn.classList.toggle('visible', ledgerInput.value.trim().length >= 2);
+}
+
+// ── Submit / Sign ─────────────────────────────────────────────
+function signLedger() {
+  const name = ledgerInput.value.trim();
+  if (name.length < 2) {
+    // Shake input
+    ledgerInput.animate([
+      { transform: 'translateX(0)' },
+      { transform: 'translateX(-8px)' },
+      { transform: 'translateX(8px)' },
+      { transform: 'translateX(-4px)' },
+      { transform: 'translateX(0)' }
+    ], { duration: 300, easing: 'ease-out' });
+    return;
+  }
+  transitionTo('signed');
+  ledgerInput.blur();
+  ledgerInput.readOnly = true;
+
+  // Flood effect on the rendered name
+  Array.from(ledgerRendered.children).forEach((el, i) => {
+    el.classList.add('wet');
+    el.style.animationDelay = (i * 0.03) + 's';
+  });
+  restartAnim(ledgerBlot, 'visible');
+
+  // Show full-screen gate opening
+  const overlay = document.createElement('div');
+  overlay.className = 'gate-opening';
+  const textDiv = document.createElement('div');
+  textDiv.className = 'gate-opening-text';
+  textDiv.innerHTML = 'The ledger accepts thee.<br>';
+  const nameSpan = document.createElement('span');
+  nameSpan.className = 'gate-opening-name';
+  nameSpan.textContent = `— ${name} —`;
+  textDiv.appendChild(nameSpan);
+  overlay.appendChild(textDiv);
+  document.body.appendChild(overlay);
+  requestAnimationFrame(() => overlay.classList.add('active'));
+
+  // Redirect to the game after a pause for drama
+  setTimeout(() => {
+    window.location.href = GAME_URL;
+  }, 3400);
+}
+
+ledgerInput?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    signLedger();
+  }
+});
+ledgerSignBtn?.addEventListener('click', signLedger);
+
+// ── Blood drip on cursor (throttled + only sometimes)
+let lastDrip = 0;
+let activeDrips = 0;
+document.addEventListener('mousemove', (e) => {
+  const now = Date.now();
+  if (now - lastDrip < 180) return;
+  if (Math.random() > 0.2) return;
+  if (activeDrips >= 12) return;
+  lastDrip = now;
+  activeDrips++;
+  const d = document.createElement('div');
+  d.className = 'drip';
+  d.style.left = (e.clientX + (Math.random()-0.5)*8) + 'px';
+  d.style.top  = e.clientY + 'px';
+  document.body.appendChild(d);
+  setTimeout(() => { d.remove(); activeDrips--; }, 2600);
+});
+
+
+
+// ── Parallax scene pan ──────────────────────────────────────────
+(function () {
+  const sceneEl = document.querySelector('.scene');
+  if (!sceneEl) return;
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReduced) return;
+
+  let ticking = false;
+
+  function updateScene() {
+    ticking = false;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    if (maxScroll <= 0) return;
+    const progress = Math.max(0, Math.min(1, window.scrollY / maxScroll));
+    const sceneH = sceneEl.offsetHeight;
+    const panDistance = sceneH - window.innerHeight;
+    sceneEl.style.transform = `translateY(${-progress * panDistance}px)`;
+  }
+
+  function schedule() {
+    if (!ticking) {
+      requestAnimationFrame(updateScene);
+      ticking = true;
+    }
+  }
+
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', schedule, { passive: true });
+  sceneUpdate = updateScene;
+  updateScene();
+})();
+
+// ── Ember particle canvas
+(function () {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) return;
+
+  const STRIP_H = 320; // embers only rise ~280px, keep canvas small
+  const canvas = document.createElement('canvas');
+  canvas.id = 'embers';
+  canvas.style.cssText = 'position:fixed;bottom:0;left:0;width:100%;height:' + STRIP_H + 'px;pointer-events:none;z-index:50';
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = STRIP_H;
+  }
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+
+  const COUNT = 20;
+  const FRAME_MS = 1000 / 24;
+  let lastDraw = 0;
+  let rafId = null;
+
+  function resetParticle(p) {
+    p.x = Math.random() * canvas.width;
+    p.y = STRIP_H + 8;
+    p.vy = -(0.35 + Math.random() * 0.55);
+    p.vx = (Math.random() - 0.5) * 0.25;
+    p.size = 1 + Math.random() * 1.8;
+    p.life = 0;
+    p.maxLife = 0.6 + Math.random() * 0.4;
+    p.drift = Math.random() * Math.PI * 2;
+    p.driftSpeed = 0.015 + Math.random() * 0.02;
+  }
+  function makeParticle() {
+    const p = {};
+    resetParticle(p);
+    p.life = Math.random(); // stagger initial phases so they don't all start at bottom
+    return p;
+  }
+  const particles = Array.from({ length: COUNT }, makeParticle);
+
+  function draw(ts) {
+    rafId = requestAnimationFrame(draw);
+    if (ts - lastDraw < FRAME_MS) return;
+    lastDraw = ts;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (const p of particles) {
+      p.life += 0.004;
+      p.drift += p.driftSpeed;
+      p.y += p.vy;
+      p.x += p.vx + Math.sin(p.drift) * 0.35;
+
+      if (p.life > p.maxLife || p.y < -10) { resetParticle(p); continue; }
+
+      const t = p.life / p.maxLife;
+      const alpha = t < 0.2 ? t / 0.2 : t > 0.7 ? 1 - (t - 0.7) / 0.3 : 1;
+      const hue = 22 - t * 14;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * (1 - t * 0.4), 0, Math.PI * 2);
+      ctx.fillStyle = `hsla(${hue}, 100%, 62%, ${alpha * 0.55})`;
+      ctx.fill();
+    }
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      cancelAnimationFrame(rafId); rafId = null;
+    } else if (!rafId) {
+      rafId = requestAnimationFrame(draw);
+    }
+  });
+  rafId = requestAnimationFrame(draw);
+})();
+
+// ── Portal candle ambient glow (one per portal)
+document.querySelectorAll('.portal').forEach((portal, i) => {
+  const candle = document.createElement('div');
+  candle.className = 'portal-candle';
+  candle.style.animationDelay = (i * 0.85) + 's';
+  portal.appendChild(candle);
+});
+
+// ── Portal scroll reveal (staggered)
+(function () {
+  const portals = document.querySelectorAll('.portal');
+  if (!portals.length) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      portals.forEach((p, i) => setTimeout(() => p.classList.add('revealed'), i * 150));
+      io.unobserve(entry.target);
+    });
+  }, { threshold: 0.15 });
+  const gatesSection = portals[0].closest('section');
+  if (gatesSection) io.observe(gatesSection);
+})();
+
+// ── Section scroll reveal (.ritual, .litany)
+(function () {
+  const sections = document.querySelectorAll('.ritual, .litany');
+  if (!sections.length) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('section-revealed');
+      io.unobserve(entry.target);
+    });
+  }, { threshold: 0.1 });
+  sections.forEach(s => io.observe(s));
+})();
+
+</script>
+
 </body>
 </html>
