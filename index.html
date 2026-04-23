@@ -4,10 +4,26 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>The Church of Decay — Order of Merken</title>
-<link rel="icon" href="data:,">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=UnifrakturCook:wght@700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<meta name="description" content="An unofficial reliquary for The Church of Decay — a Roblox horror role-play experience. Enter the nave, sign the ledger, and join the Order of Merken." />
+<meta name="theme-color" content="#0a0404" />
+<meta name="color-scheme" content="dark" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="apple-touch-icon" href="favicon.svg" />
+<link rel="preload" as="image" href="assets/meirkien.png" fetchpriority="high" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="The Church of Decay — Order of Merken" />
+<meta property="og:description" content="Beneath the Bonelands, where the antlered god lies sleeping and the stones weep rust — the faithful keep the long vigil." />
+<meta property="og:image" content="assets/meirkien.png" />
+<meta property="og:locale" content="en_US" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="The Church of Decay — Order of Merken" />
+<meta name="twitter:description" content="Beneath the Bonelands, where the antlered god lies sleeping and the stones weep rust — the faithful keep the long vigil." />
+<meta name="twitter:image" content="assets/meirkien.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=UnifrakturCook:wght@700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@300;400&display=swap" />
+<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=UnifrakturCook:wght@700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@300;400&display=swap" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=UnifrakturCook:wght@700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@300;400&display=swap" /></noscript>
 <style>
 /* ───────── TWEAKABLE DEFAULTS ───────── */
 </style>
@@ -213,9 +229,13 @@ body::before {
   80%  { transform: translateY(-2px) scale(0.99); }
   100% { opacity: 1; transform: translateY(0) scale(1); }
 }
-@keyframes logoGlow {
-  0%, 100% { opacity: 0.85; }
-  50%       { opacity: 1; }
+@keyframes sigilReveal {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 0.55; transform: scale(1); }
+}
+@keyframes sigilSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(12px); }
@@ -238,8 +258,8 @@ body::before {
   100%    { opacity: 0; }
 }
 @keyframes eyePulse {
-  0%, 100% { opacity: 0.8; }
-  50%      { opacity: 1; }
+  0%, 100% { box-shadow: 0 0 14px 7px rgba(255,255,255,0.75); }
+  50%      { box-shadow: 0 0 20px 10px rgba(255,255,255,1); }
 }
 @keyframes gateReveal {
   from { opacity: 0; }
@@ -253,17 +273,6 @@ body::before {
 }
 
 /* ── Gate redesign: new classes ── */
-.arch-wrap {
-  position: absolute;
-  width: min(520px, 92vw);
-  height: min(640px, 88vh);
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  z-index: 1;
-  opacity: 0;
-  animation: gateReveal 0.5s ease 0.65s forwards;
-}
 .gate-static {
   position: fixed;
   inset: 0;
@@ -273,34 +282,6 @@ body::before {
   pointer-events: none;
   image-rendering: pixelated;
   transition: opacity 0.35s ease;
-}
-.logo-wrap {
-  width: min(260px, 58vw);
-  height: min(260px, 58vw);
-  margin: 0 auto 28px;
-}
-.logo-img {
-  width: 100%; height: 100%;
-  object-fit: contain;
-  mix-blend-mode: screen;
-  animation: logoGlow 3.5s ease-in-out 2.2s infinite;
-}
-.gate-latin {
-  font-family: 'EB Garamond', serif;
-  font-style: italic;
-  font-size: clamp(12px, 1.6vw, 15px);
-  color: rgba(232,220,184,0.38);
-  letter-spacing: 0.25em;
-  margin-bottom: 18px;
-}
-.gate-watcher {
-  position: fixed;
-  inset: 0;
-  z-index: 201;
-  overflow: hidden;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  animation: watcherFade 0.7s ease-out forwards;
 }
 .eye-glare {
   position: fixed;
@@ -314,17 +295,64 @@ body::before {
   box-shadow: 0 0 16px 8px rgba(255,255,255,0.9);
   animation: eyeStare 0.7s ease-out forwards, eyePulse 0.4s ease-in-out infinite;
 }
-.gate-watcher-img {
+
+/* Sigils overlay (replaces arch/logo/watcher) */
+.sigils {
   position: absolute;
-  width: 72vw;
-  height: 72vw;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -44%);
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+.sigil {
+  position: absolute;
+  width: 54px;
+  height: 54px;
+  margin-left: -27px;
+  margin-top: -27px;
+  opacity: 0;
+  color: #a01414;
+  animation: sigilReveal 0.8s ease forwards;
+}
+.sigil svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 4px rgba(160,20,20,0.6));
+  animation: sigilSpin 32s linear infinite;
+}
+.sigil:nth-child(even) svg { animation-direction: reverse; animation-duration: 40s; }
+
+/* Gate structure: invocation / relic / rite */
+.gate-invocation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+.gate-relic {
+  width: min(400px, 78vw);
+  height: min(400px, 78vw);
+  margin: 0 auto 34px;
+  pointer-events: none;
+  opacity: 0;
+  animation: gateReveal 0.7s ease 0.55s forwards;
+  filter: drop-shadow(0 8px 28px rgba(122,10,10,0.55));
+}
+.relic-img {
+  width: 100%;
+  height: 100%;
   object-fit: contain;
-  opacity: 0.6;
-  filter: grayscale(1) brightness(1.3) contrast(2) blur(2px)
-          drop-shadow(0 0 24px rgba(255,255,255,0.35));
+  opacity: 0.92;
+}
+.gate-rite {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
 }
 .ember {
   position: fixed;
@@ -494,6 +522,23 @@ body::before {
 @media (prefers-reduced-motion: reduce) {
   .scene { transform: none !important; }
   .walker { animation: none !important; }
+
+  /* Comprehensive motion reduction: collapse every decorative animation to a
+     near-zero duration so final state lands instantly (running-state preserved)
+     while removing continuous motion. Essential cross-fades on #gate/#stage
+     retain their transitions — they act as state indicators, not decoration. */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* SVG SMIL animations inside the cathedral backdrop */
+  animate, animateTransform, animateMotion { display: none !important; }
+  /* Fog blobs wiggle; pin them in place */
+  .fog-blob { transform: none !important; }
 }
 
 /* Banners hanging */
@@ -535,9 +580,12 @@ main {
   position: relative;
   z-index: 10;
   min-height: 100vh;
-  padding: 40px 48px 80px;
-  max-width: 1400px;
+  padding: 40px 32px 80px;
+  max-width: 960px;
   margin: 0 auto;
+}
+main > * + *:not(.hero):not(.hero-prose) {
+  margin-top: clamp(80px, 12vh, 160px);
 }
 
 .topbar {
@@ -572,7 +620,9 @@ main {
 
 /* HERO */
 .hero {
-  padding: 2vh 0 80px;
+  padding: 2vh 0 0;
+  min-height: calc(100vh - 140px);
+  min-height: calc(100svh - 140px);
   text-align: center;
   position: relative;
   display: flex;
@@ -590,6 +640,16 @@ main {
   padding-left: 0.8em; /* compensate for letter-spacing */
 }
 
+.hero-heading {
+  margin: 0;
+  padding: 0;
+  font-weight: 400;
+  font-size: inherit;
+  text-align: center;
+}
+.hero-church,
+.hero-of,
+.hero-decay { display: block; }
 .hero-church,
 .hero-decay {
   font-family: 'UnifrakturCook', serif;
@@ -614,17 +674,28 @@ main {
   padding-left: 0.25em;
 }
 .hero-rose-gap {
-  height: calc(min(40vmin, 500px) * 1.15 + 50px);
+  height: calc(min(40vmin, 500px) * 1.05 + 20px);
   width: 100%;
   flex-shrink: 0;
   pointer-events: none;
 }
 
+.hero .divider {
+  margin-top: auto;
+  margin-bottom: 0;
+}
+
+.hero-prose {
+  padding: 80px 0 0;
+}
+
 .hero-subtitle {
-  max-width: 640px;
-  margin: 38px auto 0;
+  max-width: 48ch;
+  margin: 0 auto;
+  text-align: justify;
+  hyphens: auto;
   font-family: 'EB Garamond', serif;
-  font-size: 19px;
+  font-size: clamp(17px, 1.5vw, 22px);
   font-style: italic;
   line-height: 1.6;
   color: rgba(232,220,184,0.75);
@@ -651,13 +722,18 @@ main {
 
 /* CREED — whispered verses */
 .creed {
-  text-align: center;
-  padding: 40px 0 60px;
+  text-align: left;
+  padding: 16px 0 40px;
+  max-width: 48ch;
+  margin-inline: auto;
   font-family: 'EB Garamond', serif;
   font-style: italic;
-  font-size: 17px;
+  font-size: clamp(15px, 1.4vw, 20px);
   line-height: 2;
   color: rgba(232,220,184,0.7);
+}
+main > .hero-prose + .creed {
+  margin-top: 40px;
 }
 .creed p { margin: 0; }
 .creed .line {
@@ -693,14 +769,12 @@ main {
 
 .gates {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 20px;
-  margin-top: 20px;
+  margin: 20px auto 0;
+  max-width: 620px;
 }
 
-@media (max-width: 1000px) {
-  .gates { grid-template-columns: repeat(2, 1fr); }
-}
 @media (max-width: 560px) {
   .gates { grid-template-columns: 1fr; }
   main { padding: 30px 20px 60px; }
@@ -711,14 +785,15 @@ main {
   position: relative;
   display: block;
   padding: 32px 24px 32px;
-  background:
-    linear-gradient(180deg, rgba(42,6,6,0.85) 0%, rgba(20,3,3,0.85) 100%);
+  background: rgba(10, 7, 7, 0.38);
+  backdrop-filter: blur(6px) saturate(1.1);
+  -webkit-backdrop-filter: blur(6px) saturate(1.1);
   border: 1px solid rgba(122,10,10,0.5);
   color: var(--parchment);
   text-decoration: none;
   overflow: hidden;
   transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-  min-height: 340px;
+  min-height: 260px;
   cursor: pointer;
 }
 
@@ -747,6 +822,7 @@ main {
 }
 
 .portal:hover {
+  background: rgba(42, 6, 6, 0.55);
   border-color: var(--blood-bright);
   transform: translateY(-4px);
   box-shadow:
@@ -1293,9 +1369,14 @@ body.near-ledger { cursor: none; }
 /* ────────── LITANY / COMMANDMENTS ────────── */
 .litany {
   margin-top: 120px;
-  max-width: 880px;
-  margin-left: auto;
-  margin-right: auto;
+  max-width: 520px;
+  margin-inline: auto 0;
+}
+@media (max-width: 700px) {
+  .litany {
+    max-width: 880px;
+    margin-inline: auto;
+  }
 }
 .litany-head {
   text-align: center;
@@ -1320,7 +1401,9 @@ body.near-ledger { cursor: none; }
   .commandments { grid-template-columns: 1fr; }
 }
 .cmd {
-  background: rgba(10,4,4,0.9);
+  background: rgba(10, 4, 4, 0.4);
+  backdrop-filter: blur(6px) saturate(1.1);
+  -webkit-backdrop-filter: blur(6px) saturate(1.1);
   padding: 28px 28px;
   display: flex;
   flex-direction: column;
@@ -1329,7 +1412,7 @@ body.near-ledger { cursor: none; }
   gap: 12px;
   transition: background 0.4s;
 }
-.cmd:hover { background: rgba(42,6,6,0.9); }
+.cmd:hover { background: rgba(42, 6, 6, 0.55); }
 .cmd-num {
   font-family: 'UnifrakturCook', serif;
   font-size: 38px;
@@ -1567,43 +1650,70 @@ footer .disclaimer {
 <div id="gate">
   <canvas class="gate-static" id="gateStatic"></canvas>
   <div class="gate-vignette"></div>
-  <div class="gate-watcher" aria-hidden="true">
-    <img class="gate-watcher-img" src="assets/merken.png" alt="">
-  </div>
   <div class="eye-glare" aria-hidden="true"></div>
-  <button class="gate-close" onclick="enterNave()" title="Skip entrance">× skip</button>
+  <button class="gate-close" onclick="enterNave()" title="Skip entrance" type="button">× skip</button>
 
-  <!-- Gothic arch backdrop -->
-  <div class="arch-wrap" aria-hidden="true">
-    <svg viewBox="0 0 520 640" fill="none" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-      <path d="M30 640 L30 260 Q260 10 490 260 L490 640" stroke="#7a0a0a" stroke-width="1.4" opacity="0.7"/>
-      <path d="M54 640 L54 272 Q260 44 466 272 L466 640" stroke="#3a0505" stroke-width="0.9" opacity="0.6"/>
-      <path d="M80 640 L80 286 Q260 80 440 286 L440 640" stroke="#2a0404" stroke-width="0.6" opacity="0.5"/>
-      <line x1="30" y1="400" x2="54" y2="400" stroke="#5a0808" stroke-width="0.8" opacity="0.6"/>
-      <line x1="466" y1="400" x2="490" y2="400" stroke="#5a0808" stroke-width="0.8" opacity="0.6"/>
-      <line x1="30" y1="500" x2="54" y2="500" stroke="#5a0808" stroke-width="0.8" opacity="0.5"/>
-      <line x1="466" y1="500" x2="490" y2="500" stroke="#5a0808" stroke-width="0.8" opacity="0.5"/>
-      <path d="M242 28 L260 8 L278 28 L270 36 L260 28 L250 36 Z" stroke="#5a0808" stroke-width="0.8" fill="none" opacity="0.6"/>
-      <rect x="22" y="580" width="16" height="60" stroke="#3a0505" stroke-width="0.8" fill="none" opacity="0.4"/>
-      <rect x="482" y="580" width="16" height="60" stroke="#3a0505" stroke-width="0.8" fill="none" opacity="0.4"/>
-      <path d="M18 580 L22 570 L38 570 L42 580" stroke="#3a0505" stroke-width="0.8" fill="none" opacity="0.5"/>
-      <path d="M478 580 L482 570 L498 570 L502 580" stroke="#3a0505" stroke-width="0.8" fill="none" opacity="0.5"/>
-      <circle cx="260" cy="52" r="6" stroke="#5a0808" stroke-width="0.7" fill="none" opacity="0.5"/>
-      <circle cx="248" cy="64" r="5" stroke="#3a0505" stroke-width="0.6" fill="none" opacity="0.4"/>
-      <circle cx="272" cy="64" r="5" stroke="#3a0505" stroke-width="0.6" fill="none" opacity="0.4"/>
-    </svg>
+  <div class="sigils" aria-hidden="true">
+    <!-- Ouroboros -->
+    <div class="sigil" style="top: calc(50% - 140px); left: calc(50% - 260px); animation-delay: 0.8s;">
+      <svg viewBox="0 0 60 60">
+        <circle cx="30" cy="30" r="22" stroke-dasharray="115 10" />
+        <path d="M 30 6 L 26 12 L 34 12 Z" fill="currentColor" stroke="none" />
+      </svg>
+    </div>
+    <!-- Ankh -->
+    <div class="sigil" style="top: calc(50%); left: calc(50% - 260px); animation-delay: 0.92s;">
+      <svg viewBox="0 0 60 60">
+        <circle cx="30" cy="22" r="11" />
+        <path d="M 30 33 L 30 54" stroke-width="2" />
+        <path d="M 20 42 L 40 42" stroke-width="2" />
+      </svg>
+    </div>
+    <!-- Inverted Cross -->
+    <div class="sigil" style="top: calc(50% + 140px); left: calc(50% - 260px); animation-delay: 1.04s;">
+      <svg viewBox="0 0 60 60">
+        <path d="M 30 6 L 30 54" stroke-width="2.2" />
+        <path d="M 18 42 L 42 42" stroke-width="2.2" />
+      </svg>
+    </div>
+    <!-- Pentagram -->
+    <div class="sigil" style="top: calc(50% - 140px); left: calc(50% + 260px); animation-delay: 1.16s;">
+      <svg viewBox="0 0 60 60">
+        <circle cx="30" cy="30" r="26" />
+        <path d="M 30 7 L 44 49.5 L 6.5 23 L 53.5 23 L 16 49.5 Z" />
+      </svg>
+    </div>
+    <!-- Hexagram -->
+    <div class="sigil" style="top: calc(50%); left: calc(50% + 260px); animation-delay: 1.28s;">
+      <svg viewBox="0 0 60 60">
+        <path d="M 30 6 L 8.5 43 L 51.5 43 Z" />
+        <path d="M 30 54 L 8.5 17 L 51.5 17 Z" />
+      </svg>
+    </div>
+    <!-- Eye Triangle -->
+    <div class="sigil" style="top: calc(50% + 140px); left: calc(50% + 260px); animation-delay: 1.4s;">
+      <svg viewBox="0 0 60 60">
+        <path d="M 30 8 L 54 50 L 6 50 Z" />
+        <ellipse cx="30" cy="38" rx="11" ry="5" />
+        <circle cx="30" cy="38" r="2.5" fill="currentColor" stroke="none" />
+      </svg>
+    </div>
   </div>
 
   <div class="gate-inner">
-    <div class="logo-wrap">
-      <img class="logo-img" src="assets/merken.png" alt="Merken — Church of Decay">
+    <div class="gate-invocation">
+      <div id="whisper" class="gate-whisper">the veil is thin tonight</div>
+      <div class="gate-title">Church of Decay</div>
     </div>
-    <div class="gate-whisper" id="whisper">the veil is thin tonight</div>
-    <h1 class="gate-title">Church of Decay</h1>
-    <div class="gate-latin">· Ecclesia Putredinis ·</div>
-    <div class="gate-prompt">the faithful gather below</div>
-    <button class="gate-button" id="enterBtn">Enter the Nave</button>
-    <div class="gate-warning">mind the red floor · turn back if unwilling</div>
+
+    <div class="gate-relic" aria-hidden="true">
+      <img class="relic-img" src="assets/merken.png" alt="" width="1000" height="991" decoding="async" />
+    </div>
+
+    <div class="gate-rite">
+      <button id="enterBtn" class="gate-button" type="button">Enter the Nave</button>
+      <div class="gate-warning">mind the red floor · turn back if unwilling</div>
+    </div>
   </div>
 </div>
 
@@ -2121,9 +2231,11 @@ footer .disclaimer {
 
     <section class="hero">
       <div class="eyebrow">Worshippers of the Dead God</div>
-      <div class="hero-church">Church</div>
-      <div class="hero-of">— of —</div>
-      <div class="hero-decay">Decay</div>
+      <h1 class="hero-heading" aria-label="Church of Decay">
+        <span class="hero-church" aria-hidden="true">Church</span>
+        <span class="hero-of" aria-hidden="true">— of —</span>
+        <span class="hero-decay" aria-hidden="true">Decay</span>
+      </h1>
       <div class="hero-rose-gap"></div>
 
       <div class="divider">
@@ -2133,7 +2245,9 @@ footer .disclaimer {
         </svg>
         <span></span>
       </div>
+    </section>
 
+    <section class="hero-prose">
       <p class="hero-subtitle">
         Beneath the Bonelands, where the antlered god lies sleeping and the stones weep rust — the faithful keep the long vigil. All decay is holy. All rot is prayer.
       </p>
@@ -2153,7 +2267,7 @@ footer .disclaimer {
 
     <section class="gates">
 
-      <a class="portal" href="https://www.roblox.com/games/5053514572/The-Bonelands" target="_blank" rel="noopener">
+      <a class="portal" href="https://www.roblox.com/games/5053514572/The-Bonelands" target="_blank" rel="noopener noreferrer">
         <div class="portal-roman">I</div>
         <svg class="portal-icon" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.5">
           <!-- Gate/door -->
@@ -2171,7 +2285,7 @@ footer .disclaimer {
         <div class="portal-enter">Enter the Game</div>
       </a>
 
-      <a class="portal" href="https://churchdecay.fandom.com/wiki/Church_of_Decay_Wiki" target="_blank" rel="noopener">
+      <a class="portal" href="https://churchdecay.fandom.com/wiki/Church_of_Decay_Wiki" target="_blank" rel="noopener noreferrer">
         <div class="portal-roman">II</div>
         <svg class="portal-icon" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.5">
           <!-- Tome -->
@@ -2188,7 +2302,7 @@ footer .disclaimer {
         <div class="portal-enter">Open the Wiki</div>
       </a>
 
-      <a class="portal" href="https://discord.gg/cDkQXxaP2A" target="_blank" rel="noopener">
+      <a class="portal" href="https://discord.gg/cDkQXxaP2A" target="_blank" rel="noopener noreferrer">
         <div class="portal-roman">III</div>
         <svg class="portal-icon" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.5">
           <!-- Chalice / communion -->
@@ -2208,7 +2322,7 @@ footer .disclaimer {
         <div class="portal-enter">Join Discord</div>
       </a>
 
-      <a class="portal" href="https://www.roblox.com/communities/5917063/Church-of-Decay#!/about" target="_blank" rel="noopener">
+      <a class="portal" href="https://www.roblox.com/communities/5917063/Church-of-Decay#!/about" target="_blank" rel="noopener noreferrer">
         <div class="portal-roman">IV</div>
         <svg class="portal-icon" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.5">
           <!-- Banner -->
@@ -2231,16 +2345,12 @@ footer .disclaimer {
     </section>
 
     <!-- Gothic divider -->
-    <div class="gothic-divider" aria-hidden="true">
-      <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
-        <line x1="14" y1="3" x2="14" y2="25" stroke="#c41818" stroke-width="1.2" stroke-linecap="round"/>
-        <line x1="3" y1="14" x2="25" y2="14" stroke="#c41818" stroke-width="1.2" stroke-linecap="round"/>
-        <circle cx="14" cy="3"  r="2.2" fill="#c41818"/>
-        <circle cx="14" cy="25" r="2.2" fill="#c41818"/>
-        <circle cx="3"  cy="14" r="2.2" fill="#c41818"/>
-        <circle cx="25" cy="14" r="2.2" fill="#c41818"/>
-        <circle cx="14" cy="14" r="3.5" fill="#c41818"/>
+    <div class="divider" aria-hidden="true">
+      <span></span>
+      <svg class="divider-glyph" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/>
       </svg>
+      <span></span>
     </div>
 
     <!-- ═══════════ RITUAL: The Ledger ═══════════ -->
@@ -2287,16 +2397,12 @@ footer .disclaimer {
     </section>
 
     <!-- Gothic divider -->
-    <div class="gothic-divider" aria-hidden="true">
-      <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
-        <line x1="14" y1="3" x2="14" y2="25" stroke="#c41818" stroke-width="1.2" stroke-linecap="round"/>
-        <line x1="3" y1="14" x2="25" y2="14" stroke="#c41818" stroke-width="1.2" stroke-linecap="round"/>
-        <circle cx="14" cy="3"  r="2.2" fill="#c41818"/>
-        <circle cx="14" cy="25" r="2.2" fill="#c41818"/>
-        <circle cx="3"  cy="14" r="2.2" fill="#c41818"/>
-        <circle cx="25" cy="14" r="2.2" fill="#c41818"/>
-        <circle cx="14" cy="14" r="3.5" fill="#c41818"/>
+    <div class="divider" aria-hidden="true">
+      <span></span>
+      <svg class="divider-glyph" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/>
       </svg>
+      <span></span>
     </div>
 
     <!-- ═══════════ LITANY ═══════════ -->
@@ -2414,26 +2520,6 @@ setInterval(() => {
     whisperEl.style.opacity = '1';
   }, 650);
 }, 4000);
-
-// ── Position eye glares over skull image
-(function positionGlares() {
-  const img = document.querySelector('.gate-watcher-img');
-  const glares = document.querySelectorAll('.eye-glare');
-  if (!img || !glares.length) return;
-  // x/y as fractions of the image rect — tweak these to land on the eyes
-  const eyes = [
-    { x: 0.495, y: 0.51 },
-  ];
-  function place() {
-    const r = img.getBoundingClientRect();
-    eyes.forEach((e, i) => {
-      if (!glares[i]) return;
-      glares[i].style.left = (r.left + e.x * r.width)  + 'px';
-      glares[i].style.top  = (r.top  + e.y * r.height) + 'px';
-    });
-  }
-  img.complete ? place() : img.addEventListener('load', place);
-})();
 
 // ── Snow static intro
 (function gateStatic() {
