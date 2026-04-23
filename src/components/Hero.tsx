@@ -1,26 +1,30 @@
 export function Hero() {
   return (
-    <section className="hero">
-      <div className="eyebrow">Worshippers of the Dead God</div>
-      <h1 className="hero-heading" aria-label="Church of Decay">
-        <span className="hero-church" aria-hidden="true">Church</span>
-        <span className="hero-of" aria-hidden="true">— of —</span>
-        <span className="hero-decay" aria-hidden="true">Decay</span>
-      </h1>
-      <div className="hero-rose-gap" />
+    <>
+      <section className="hero">
+        <div className="eyebrow">Worshippers of the Dead God</div>
+        <h1 className="hero-heading" aria-label="Church of Decay">
+          <span className="hero-church" aria-hidden="true">Church</span>
+          <span className="hero-of" aria-hidden="true">— of —</span>
+          <span className="hero-decay" aria-hidden="true">Decay</span>
+        </h1>
+        <div className="hero-rose-gap" />
 
-      <div className="divider">
-        <span />
-        <svg className="divider-glyph" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z" />
-        </svg>
-        <span />
-      </div>
+        <div className="divider">
+          <span />
+          <svg className="divider-glyph" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z" />
+          </svg>
+          <span />
+        </div>
+      </section>
 
-      <p className="hero-subtitle">
-        Beneath the Bonelands, where the antlered god lies sleeping and the stones weep rust — the
-        faithful keep the long vigil. All decay is holy. All rot is prayer.
-      </p>
-    </section>
+      <section className="hero-prose">
+        <p className="hero-subtitle">
+          Beneath the Bonelands, where the antlered god lies sleeping and the stones weep rust — the
+          faithful keep the long vigil. All decay is holy. All rot is prayer.
+        </p>
+      </section>
+    </>
   );
 }

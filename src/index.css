@@ -216,9 +216,13 @@ body::before {
   80%  { transform: translateY(-2px) scale(0.99); }
   100% { opacity: 1; transform: translateY(0) scale(1); }
 }
-@keyframes logoGlow {
-  0%, 100% { opacity: 0.85; }
-  50%       { opacity: 1; }
+@keyframes sigilReveal {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 0.55; transform: scale(1); }
+}
+@keyframes sigilSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(12px); }
@@ -241,8 +245,8 @@ body::before {
   100%    { opacity: 0; }
 }
 @keyframes eyePulse {
-  0%, 100% { opacity: 0.8; }
-  50%      { opacity: 1; }
+  0%, 100% { box-shadow: 0 0 14px 7px rgba(255,255,255,0.75); }
+  50%      { box-shadow: 0 0 20px 10px rgba(255,255,255,1); }
 }
 @keyframes gateReveal {
   from { opacity: 0; }
@@ -256,16 +260,33 @@ body::before {
 }
 
 /* ── Gate redesign: new classes ── */
-.arch-wrap {
-  position: absolute;
-  width: min(520px, 92vw);
-  height: min(640px, 88vh);
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
+.gate-invocation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+.gate-relic {
+  width: min(400px, 78vw);
+  height: min(400px, 78vw);
+  margin: 0 auto 34px;
   pointer-events: none;
-  z-index: 1;
   opacity: 0;
-  animation: gateReveal 0.5s ease 0.65s forwards;
+  animation: gateReveal 0.7s ease 0.55s forwards;
+  filter: drop-shadow(0 8px 28px rgba(122,10,10,0.55));
+}
+.relic-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0.92;
+}
+.gate-rite {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
 }
 .gate-static {
   position: fixed;
@@ -277,17 +298,33 @@ body::before {
   image-rendering: pixelated;
   transition: opacity 0.35s ease;
 }
-.logo-wrap {
-  width: min(260px, 58vw);
-  height: min(260px, 58vw);
-  margin: 0 auto 28px;
+.sigils {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
 }
-.logo-img {
-  width: 100%; height: 100%;
-  object-fit: contain;
-  mix-blend-mode: screen;
-  animation: logoGlow 3.5s ease-in-out 2.2s infinite;
+.sigil {
+  position: absolute;
+  width: 54px;
+  height: 54px;
+  margin-left: -27px;
+  margin-top: -27px;
+  opacity: 0;
+  color: #a01414;
+  animation: sigilReveal 0.8s ease forwards;
 }
+.sigil svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 4px rgba(160,20,20,0.6));
+  animation: sigilSpin 32s linear infinite;
+}
+.sigil:nth-child(even) svg { animation-direction: reverse; animation-duration: 40s; }
 .gate-latin {
   font-family: 'EB Garamond', serif;
   font-style: italic;
@@ -555,9 +592,12 @@ main {
   position: relative;
   z-index: 10;
   min-height: 100vh;
-  padding: 40px 48px 80px;
-  max-width: 1400px;
+  padding: 40px 32px 80px;
+  max-width: 960px;
   margin: 0 auto;
+}
+main > * + *:not(.hero):not(.hero-prose) {
+  margin-top: clamp(80px, 12vh, 160px);
 }
 
 .topbar {
@@ -592,12 +632,17 @@ main {
 
 /* HERO */
 .hero {
-  padding: 2vh 0 80px;
+  padding: 2vh 0 0;
+  min-height: calc(100vh - 140px);
+  min-height: calc(100svh - 140px);
   text-align: center;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.hero-prose {
+  padding: 80px 0 0;
 }
 
 .eyebrow {
@@ -644,17 +689,19 @@ main {
   padding-left: 0.25em;
 }
 .hero-rose-gap {
-  height: calc(min(40vmin, 500px) * 1.15 + 50px);
+  height: calc(min(40vmin, 500px) * 1.05 + 20px);
   width: 100%;
   flex-shrink: 0;
   pointer-events: none;
 }
 
 .hero-subtitle {
-  max-width: 640px;
-  margin: 38px auto 0;
+  max-width: 48ch;
+  margin: 0 auto;
+  text-align: justify;
+  hyphens: auto;
   font-family: 'EB Garamond', serif;
-  font-size: 19px;
+  font-size: clamp(17px, 1.5vw, 22px);
   font-style: italic;
   line-height: 1.6;
   color: rgba(232,220,184,0.75);
@@ -667,6 +714,10 @@ main {
   gap: 16px;
   margin: 0 0 24px 0;
   color: var(--blood);
+}
+.hero .divider {
+  margin-top: auto;
+  margin-bottom: 0;
 }
 .divider::before, .divider::after {
   content: '';
@@ -681,13 +732,18 @@ main {
 
 /* CREED — whispered verses */
 .creed {
-  text-align: center;
-  padding: 40px 0 60px;
+  text-align: left;
+  padding: 16px 0 40px;
+  max-width: 48ch;
+  margin-inline: auto;
   font-family: 'EB Garamond', serif;
   font-style: italic;
-  font-size: 17px;
+  font-size: clamp(15px, 1.4vw, 20px);
   line-height: 2;
   color: rgba(232,220,184,0.7);
+}
+main > .hero-prose + .creed {
+  margin-top: 40px;
 }
 .creed p { margin: 0; }
 .creed .line {
@@ -723,9 +779,10 @@ main {
 
 .gates {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 20px;
-  margin-top: 20px;
+  margin: 20px auto 0;
+  max-width: 620px;
 }
 
 @media (max-width: 1000px) {
@@ -741,14 +798,15 @@ main {
   position: relative;
   display: block;
   padding: 32px 24px 32px;
-  background:
-    linear-gradient(180deg, rgba(42,6,6,0.85) 0%, rgba(20,3,3,0.85) 100%);
+  background: rgba(10, 7, 7, 0.38);
+  backdrop-filter: blur(6px) saturate(1.1);
+  -webkit-backdrop-filter: blur(6px) saturate(1.1);
   border: 1px solid rgba(122,10,10,0.5);
   color: var(--parchment);
   text-decoration: none;
   overflow: hidden;
   transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-  min-height: 340px;
+  min-height: 260px;
   cursor: pointer;
 }
 
@@ -1323,9 +1381,14 @@ body.near-ledger { cursor: none; }
 /* ────────── LITANY / COMMANDMENTS ────────── */
 .litany {
   margin-top: 120px;
-  max-width: 880px;
-  margin-left: auto;
-  margin-right: auto;
+  max-width: 520px;
+  margin-inline: auto 0;
+}
+@media (max-width: 700px) {
+  .litany {
+    max-width: 880px;
+    margin-inline: auto;
+  }
 }
 .litany-head {
   text-align: center;
@@ -1350,7 +1413,9 @@ body.near-ledger { cursor: none; }
   .commandments { grid-template-columns: 1fr; }
 }
 .cmd {
-  background: rgba(10,4,4,0.9);
+  background: rgba(10, 4, 4, 0.4);
+  backdrop-filter: blur(6px) saturate(1.1);
+  -webkit-backdrop-filter: blur(6px) saturate(1.1);
   padding: 28px 28px;
   display: flex;
   flex-direction: column;
@@ -1359,7 +1424,7 @@ body.near-ledger { cursor: none; }
   gap: 12px;
   transition: background 0.4s;
 }
-.cmd:hover { background: rgba(42,6,6,0.9); }
+.cmd:hover { background: rgba(42, 6, 6, 0.55); }
 .cmd-num {
   font-family: 'UnifrakturCook', serif;
   font-size: 38px;
