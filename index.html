@@ -283,6 +283,27 @@ body::before {
   image-rendering: pixelated;
   transition: opacity 0.35s ease;
 }
+.gate-watcher {
+  position: fixed;
+  inset: 0;
+  z-index: 201;
+  overflow: hidden;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  animation: watcherFade 0.7s ease-out forwards;
+}
+.gate-watcher-img {
+  position: absolute;
+  width: 72vw;
+  height: 72vw;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -44%);
+  object-fit: contain;
+  opacity: 0.6;
+  filter: grayscale(1) brightness(1.3) contrast(2) blur(2px)
+          drop-shadow(0 0 24px rgba(255,255,255,0.35));
+}
 .eye-glare {
   position: fixed;
   width: 14px;
@@ -296,7 +317,7 @@ body::before {
   animation: eyeStare 0.7s ease-out forwards, eyePulse 0.4s ease-in-out infinite;
 }
 
-/* Sigils overlay (replaces arch/logo/watcher) */
+/* Sigils overlay (replaces arch/logo) */
 .sigils {
   position: absolute;
   inset: 0;
@@ -1650,6 +1671,9 @@ footer .disclaimer {
 <div id="gate">
   <canvas class="gate-static" id="gateStatic"></canvas>
   <div class="gate-vignette"></div>
+  <div class="gate-watcher" aria-hidden="true">
+    <img class="gate-watcher-img" src="assets/meirkien.png" alt="" width="700" height="700" decoding="async">
+  </div>
   <div class="eye-glare" aria-hidden="true"></div>
   <button class="gate-close" onclick="enterNave()" title="Skip entrance" type="button">× skip</button>
 
@@ -2520,6 +2544,21 @@ setInterval(() => {
     whisperEl.style.opacity = '1';
   }, 650);
 }, 4000);
+
+// ── Position the eye glare over the watcher's eye (re-computed on load + resize)
+(function positionGlare() {
+  const img = document.querySelector('.gate-watcher-img');
+  const glare = document.querySelector('.eye-glare');
+  if (!img || !glare) return;
+  function place() {
+    const r = img.getBoundingClientRect();
+    glare.style.left = (r.left + 0.495 * r.width) + 'px';
+    glare.style.top  = (r.top  + 0.5   * r.height) + 'px';
+  }
+  if (img.complete) place();
+  else img.addEventListener('load', place);
+  window.addEventListener('resize', place, { passive: true });
+})();
 
 // ── Snow static intro
 (function gateStatic() {
