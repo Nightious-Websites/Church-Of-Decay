@@ -1,5 +1,6 @@
 # Claude Code dev tooling
 .claude/
+CLAUDE.md
 
 # Playwright MCP session artifacts
 .playwright-mcp/
