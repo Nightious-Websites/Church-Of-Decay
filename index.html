@@ -1107,7 +1107,9 @@ main > .hero-prose + .creed {
 }
 
 /* ── Proximity cursor swap ── */
-body.near-ledger { cursor: none; }
+@media (pointer: fine) {
+  body.near-ledger { cursor: none; }
+}
 
 .ledger-page::after {
   /* parchment grain */
@@ -2404,7 +2406,9 @@ footer .disclaimer {
               <div class="ledger-sign-slot">
                 <span class="ledger-cursor" id="ledgerCursor"></span>
                 <input id="ledgerInput" class="ledger-input" type="text" maxlength="28"
-                       placeholder="inscribe thy name…" autocomplete="off" spellcheck="false"/>
+                       placeholder="inscribe thy name…"
+                       aria-label="Inscribe thy name in the ledger"
+                       autocomplete="off" spellcheck="false"/>
                 <span class="ledger-rendered" id="ledgerRendered"></span>
                 <span class="ledger-ink-blot" id="ledgerInkBlot"></span>
               </div>
@@ -2468,6 +2472,15 @@ footer .disclaimer {
 
 <script>
 // ═════════════════ RUNTIME ═════════════════
+
+// Announce external links to screen readers — every a[target="_blank"] gets
+// its visible text amended with "(opens in new tab)" in an aria-label if
+// none is already set.
+document.querySelectorAll('a[target="_blank"]').forEach((a) => {
+  if (a.hasAttribute('aria-label')) return;
+  const label = a.textContent.replace(/\s+/g, ' ').trim();
+  a.setAttribute('aria-label', `${label} (opens in new tab)`);
+});
 
 const state = { ...DEFAULTS };
 let quillWriteTimer;
@@ -2898,22 +2911,26 @@ ledgerInput?.addEventListener('keydown', (e) => {
 ledgerSignBtn?.addEventListener('click', signLedger);
 
 // ── Blood drip on cursor (throttled + only sometimes)
-let lastDrip = 0;
-let activeDrips = 0;
-document.addEventListener('mousemove', (e) => {
-  const now = Date.now();
-  if (now - lastDrip < 180) return;
-  if (Math.random() > 0.2) return;
-  if (activeDrips >= 12) return;
-  lastDrip = now;
-  activeDrips++;
-  const d = document.createElement('div');
-  d.className = 'drip';
-  d.style.left = (e.clientX + (Math.random()-0.5)*8) + 'px';
-  d.style.top  = e.clientY + 'px';
-  document.body.appendChild(d);
-  setTimeout(() => { d.remove(); activeDrips--; }, 2600);
-});
+// Gated on prefers-reduced-motion: drip spawn is pure decoration and
+// should skip for users who asked for less motion.
+if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  let lastDrip = 0;
+  let activeDrips = 0;
+  document.addEventListener('mousemove', (e) => {
+    const now = Date.now();
+    if (now - lastDrip < 180) return;
+    if (Math.random() > 0.2) return;
+    if (activeDrips >= 12) return;
+    lastDrip = now;
+    activeDrips++;
+    const d = document.createElement('div');
+    d.className = 'drip';
+    d.style.left = (e.clientX + (Math.random()-0.5)*8) + 'px';
+    d.style.top  = e.clientY + 'px';
+    document.body.appendChild(d);
+    setTimeout(() => { d.remove(); activeDrips--; }, 2600);
+  });
+}
 
 
 
