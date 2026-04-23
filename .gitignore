@@ -1,0 +1,8 @@
+# Claude Code dev tooling
+.claude/
+
+# Playwright MCP session artifacts
+.playwright-mcp/
+
+# Superpowers brainstorm artifacts
+.superpowers/
