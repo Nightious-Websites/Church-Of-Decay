@@ -923,7 +923,20 @@ main > .hero-prose + .creed {
 @media (max-width: 560px) {
   .gates { grid-template-columns: 1fr; }
   main { padding: 30px 20px 60px; }
-  .hero { padding: 60px 0 40px; }
+  /* Mobile .hero padding reserves space for the smaller mobile skylight
+     (top: 4vh, height: min(78vmin, 380px)) + a 24px gap to the eyebrow. */
+  .hero { padding: calc(4vh + min(78vmin, 380px) + 24px) 0 40px; }
+  .skylight {
+    width: min(78vmin, 380px);
+    top: 4vh;
+  }
+  .vault {
+    height: 55vh;
+  }
+  .light-rays {
+    opacity: 0.3;
+    height: 70vh;
+  }
 }
 
 .portal {
