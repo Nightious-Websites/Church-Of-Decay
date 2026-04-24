@@ -500,12 +500,12 @@ body::before {
 /* Skylight size is a shared custom property so the hero padding and the
    skylight geometry scale together. */
 .hero {
-  /* Skylight nearly fills the stone-collar circle (radius 230 of viewBox
-     2700-tall → collar diameter ≈ 460 × vh/900 = 51vh when the vh side of
-     the SVG slice dominates, which is most viewports). 50vh keeps ~2% stone
-     ring visible as a frame. 90vw clamps on narrow screens so the disc
-     doesn't run past the viewport edge. */
-  --skylight-diameter: min(50vh, 90vw);
+  /* Skylight sized as a rose-window inside the stone-collar circle.
+     The collar diameter resolves to ≈ 51vh for vh-dominant viewports
+     (radius 230 of viewBox 2700 × vh/900). 37.5vh (≈75% of the collar)
+     leaves a generous stone ring around the glass. 67.5vw clamps on
+     narrow screens so the disc doesn't run past the viewport edge. */
+  --skylight-diameter: min(37.5vh, 67.5vw);
   /* Hero's padding-box top sits below the viewport top by
      <main> padding-top (40px) + topbar height (40px). Subtract that so the
      skylight-top calc below anchors to the viewport, not the hero. */
@@ -979,10 +979,10 @@ main > .hero-prose + .creed {
   main { padding: 30px 20px 60px; }
   /* Mobile: preserve the skylight-on-collar alignment. Mobile main padding-top
      drops to 30px but topbar stays ~40px, so --hero-offset shrinks to 70px.
-     Tighten --skylight-diameter with an 85vw clamp so the disc breathes
-     slightly inside the collar at narrow widths. */
+     Diameter shrinks by 25% to match desktop, with a 64vw clamp so the
+     disc breathes inside the visible collar at narrow widths. */
   .hero {
-    --skylight-diameter: min(50vh, 85vw);
+    --skylight-diameter: min(37.5vh, 64vw);
     --hero-offset: 70px;
     padding: 40px 0 40px;
   }
