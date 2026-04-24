@@ -805,6 +805,30 @@ main > * + *:not(.hero):not(.hero-prose) {
   margin-bottom: 0;
 }
 
+.scroll-hint {
+  margin-top: 40px;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.5em;
+  color: rgba(232,220,184,0.35);
+  text-transform: uppercase;
+  text-align: center;
+}
+.scroll-hint-arrow {
+  display: block;
+  margin-top: 10px;
+  font-size: 18px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .scroll-hint-arrow {
+    animation: scrollHintBob 3s ease-in-out infinite;
+  }
+}
+@keyframes scrollHintBob {
+  0%, 100% { opacity: 0.3; transform: translateY(0); }
+  50%      { opacity: 0.7; transform: translateY(4px); }
+}
+
 .hero-prose {
   padding: 80px 0 0;
 }
@@ -1953,6 +1977,10 @@ footer .disclaimer {
           <path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/>
         </svg>
         <span></span>
+      </div>
+      <div class="scroll-hint">
+        Descend into the Nave
+        <span class="scroll-hint-arrow" aria-hidden="true">▾</span>
       </div>
     </section>
 
