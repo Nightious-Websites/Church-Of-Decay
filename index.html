@@ -494,6 +494,112 @@ body::before {
   100% { transform: translate(-10vmax, 6vmax) scale(0.9); }
 }
 
+/* Skylight oculus — horned-skull lead-came stained glass set in the vault */
+.skylight {
+  position: absolute;
+  top: 8vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(64vmin, 680px);
+  aspect-ratio: 1 / 1;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Colored stained-glass light coming through the panes.
+   Palette pulled from the existing rose's shard colors so the new skylight
+   is family with the rest of the site. */
+.skylight-glow {
+  position: absolute;
+  inset: 4%;
+  border-radius: 50%;            /* keeps the glow boundary circular, not square */
+  background:
+    radial-gradient(circle at 50% 45%,
+      #ffd6a8 0%,
+      #ff8a3a 6%,
+      #e04018 14%,
+      #c83010 28%,
+      #8c0c0c 48%,
+      #5a0a0a 68%,
+      #2a0404 84%,
+      transparent 95%);
+  filter: blur(2px);
+}
+
+/* Faceted pane variation overlay — breaks the smooth radial into shards.
+   If this muddies the result during visual review, set display: none and ship without. */
+.skylight-shards {
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  background:
+    conic-gradient(from 25deg at 50% 50%,
+      rgba(224,64,24,0)   0deg,
+      rgba(255,180,90,0.18) 18deg,
+      rgba(196,24,24,0)   36deg,
+      rgba(255,180,90,0.12) 54deg,
+      rgba(140,12,12,0)   72deg,
+      rgba(255,180,90,0.20) 95deg,
+      rgba(196,24,24,0)  115deg,
+      rgba(255,200,120,0.15) 145deg,
+      rgba(120,8,8,0)    175deg,
+      rgba(255,180,90,0.22) 200deg,
+      rgba(160,16,16,0)  230deg,
+      rgba(255,180,90,0.16) 260deg,
+      rgba(140,12,12,0)  290deg,
+      rgba(255,200,120,0.20) 320deg,
+      rgba(196,24,24,0)  360deg);
+  mix-blend-mode: screen;
+  filter: blur(8px);
+  opacity: 0.7;
+}
+
+/* The lead-came pattern itself — sits cleanly on top thanks to alpha background */
+.skylight-pattern {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 2px 0 rgba(0,0,0,0.9))
+    drop-shadow(0 0 6px rgba(255,140,40,0.4));
+}
+
+/* Subtle pulse, like flickering candlelight from above */
+@media (prefers-reduced-motion: no-preference) {
+  .skylight-glow {
+    animation: skylightPulse 7s ease-in-out infinite;
+  }
+}
+@keyframes skylightPulse {
+  0%, 100% { filter: blur(2px) brightness(1); }
+  50%      { filter: blur(2px) brightness(1.12); }
+}
+
+/* Light rays slanting down through the oculus — dust-mote shafts */
+.light-rays {
+  position: absolute;
+  top: 12vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80vmin;
+  height: 95vh;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    conic-gradient(from 175deg at 50% 0%,
+      transparent 0deg,
+      rgba(255,180,90,0.07)  3deg,
+      rgba(255,180,90,0.02)  6deg,
+      transparent 10deg,
+      rgba(255,180,90,0.05) 12deg,
+      transparent 18deg,
+      rgba(255,180,90,0.04) 22deg);
+  mix-blend-mode: screen;
+  opacity: 0.55;
+}
+
 /* Walkers — the faithful pacing the nave */
 .walkers {
   position: absolute;
@@ -622,7 +728,10 @@ main > * + *:not(.hero):not(.hero-prose) {
 
 /* HERO */
 .hero {
-  padding: 2vh 0 0;
+  /* Top padding reserves vertical space for the absolute-positioned .skylight
+     (top: 8vh, height: min(64vmin, 680px)) plus a 30px gap before the eyebrow,
+     per Spec §4 composition. */
+  padding: calc(8vh + min(64vmin, 680px) + 30px) 0 0;
   min-height: calc(100vh - 140px);
   min-height: calc(100svh - 140px);
   text-align: center;
