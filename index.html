@@ -1744,77 +1744,6 @@ footer .disclaimer {
 
     </svg>
 
-    <!-- Rose window — horned skull skylight, stained glass mural -->
-    <svg class="rose" viewBox="0 0 400 400" aria-hidden="true">
-      <defs>
-        <clipPath id="roseClip">
-          <circle cx="200" cy="200" r="196"/>
-        </clipPath>
-        <!-- solid silhouette — covers glass behind skull -->
-        <mask id="roseFilledMask">
-          <image href="assets/skull-filled.png" x="10" y="5" width="380" height="390"
-            preserveAspectRatio="xMidYMid meet"/>
-        </mask>
-        <!-- original with detail holes — reveals structure on top -->
-        <mask id="roseMask">
-          <image href="assets/skull-horns.png" x="10" y="5" width="380" height="390"
-            preserveAspectRatio="xMidYMid meet"/>
-        </mask>
-      </defs>
-
-      <!-- Base fill -->
-      <circle cx="200" cy="200" r="200" fill="#060000"/>
-
-      <!-- Stained glass shards — irregular panes, each a distinct warm tone -->
-      <g clip-path="url(#roseClip)" stroke="#030000" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
-        <!-- Outer ring -->
-        <polygon points="200,4 104,28 72,88 95,112 140,96 175,72 200,60"              fill="#6a0a0a"/>
-        <polygon points="200,4 200,60 225,72 260,96 305,112 328,88 296,28"            fill="#5c0808"/>
-        <polygon points="296,28 328,88 368,110 380,160 340,148 305,112"               fill="#7a1010"/>
-        <polygon points="396,200 380,160 340,148 318,188 338,220 380,240"             fill="#8c0c0c"/>
-        <polygon points="396,200 380,240 370,298 328,308 310,272 338,220"             fill="#741010"/>
-        <polygon points="370,298 296,372 260,344 278,306 310,272 328,308"             fill="#601010"/>
-        <polygon points="296,372 200,396 200,358 230,328 260,344"                     fill="#500808"/>
-        <polygon points="200,396 104,372 140,344 170,328 200,358"                     fill="#5a0a0a"/>
-        <polygon points="104,372 30,298 72,282 90,306 122,328 140,344"                fill="#6e0e0e"/>
-        <polygon points="30,298 4,200 60,180 82,212 72,252 72,282"                    fill="#7e1212"/>
-        <polygon points="4,200 30,102 72,122 60,180"                                  fill="#901414"/>
-        <polygon points="30,102 104,28 140,96 95,112 72,122"                          fill="#a01818"/>
-        <!-- Mid ring -->
-        <polygon points="175,72 200,60 225,72 240,110 220,138 200,130 180,138 160,110" fill="#c83010"/>
-        <polygon points="140,96 175,72 160,110 132,128 108,116 95,112"                fill="#b82a0a"/>
-        <polygon points="260,96 305,112 292,116 268,128 240,110 225,72"               fill="#c02818"/>
-        <polygon points="60,180 72,122 95,112 108,116 118,148 100,180 82,212"         fill="#a82010"/>
-        <polygon points="340,148 318,188 300,180 282,148 292,116 305,112 340,148"     fill="#b42010"/>
-        <polygon points="82,212 100,180 118,148 138,168 128,210 108,240 72,252"       fill="#941818"/>
-        <polygon points="318,188 338,220 328,252 292,242 272,210 282,148 300,180"     fill="#9c1c1c"/>
-        <polygon points="72,252 108,240 128,266 108,296 90,306 72,282"                fill="#841414"/>
-        <polygon points="292,242 328,252 310,272 278,306 272,282 272,266"             fill="#8c1818"/>
-        <polygon points="128,266 160,278 200,282 240,278 272,266 272,282 240,310 200,318 160,310 128,282" fill="#701010"/>
-        <!-- Inner shards (around skull medallion) — most vivid -->
-        <polygon points="180,138 200,130 220,138 228,158 200,165 172,158"             fill="#e04018"/>
-        <polygon points="228,158 240,180 232,208 218,220 200,225 190,200 200,165"     fill="#d03810"/>
-        <polygon points="172,158 200,165 190,200 180,222 162,210 160,180"             fill="#d83c12"/>
-        <polygon points="180,222 200,225 218,220 228,242 200,255 172,242"             fill="#c03010"/>
-        <polygon points="160,180 162,210 140,220 128,210 138,168"                     fill="#cc3818"/>
-        <polygon points="240,180 262,168 272,210 260,218 232,208"                     fill="#c42e14"/>
-        <polygon points="132,128 160,110 172,158 160,180 138,168 118,148"             fill="#d43a10"/>
-        <polygon points="268,128 282,148 262,168 240,180 228,158 240,110"             fill="#cc3010"/>
-      </g>
-
-      <!-- Lead came rings -->
-      <circle cx="200" cy="200" r="68"  fill="none" stroke="#020000" stroke-width="5"   clip-path="url(#roseClip)"/>
-      <circle cx="200" cy="200" r="132" fill="none" stroke="#020000" stroke-width="4.5" clip-path="url(#roseClip)"/>
-
-      <!-- Layer 1: black backing over exact skull silhouette — hides glass shards behind skull -->
-      <circle cx="200" cy="200" r="200" fill="#000000" mask="url(#roseFilledMask)" clip-path="url(#roseClip)"/>
-      <!-- Layer 2: dark crimson over skull body only — detail holes are transparent, revealing black from Layer 1 -->
-      <circle cx="200" cy="200" r="200" fill="#2a0404" mask="url(#roseMask)" clip-path="url(#roseClip)"/>
-
-      <!-- Outer border ring -->
-      <circle cx="200" cy="200" r="196" fill="none" stroke="#180202" stroke-width="5"/>
-    </svg>
-
     <!-- Walkers at floor level -->
     <div class="walkers" aria-hidden="true">
       <div class="walker w1"><svg viewBox="0 0 20 40" xmlns="http://www.w3.org/2000/svg"><use href="#stickFigure"/></svg></div>
@@ -1856,7 +1785,6 @@ footer .disclaimer {
         <span class="hero-of" aria-hidden="true">· of ·</span>
         <span class="hero-decay" aria-hidden="true">Decay</span>
       </h1>
-      <div class="hero-rose-gap"></div>
 
       <div class="divider">
         <span></span>
