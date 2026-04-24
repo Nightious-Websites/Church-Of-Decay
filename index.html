@@ -137,7 +137,7 @@ body::before {
 
 .gate-title {
   font-family: 'UnifrakturCook', serif;
-  font-size: clamp(38px, 7vw, 54px);
+  font-size: clamp(30px, 7vw, 54px);
   color: var(--parchment);
   text-shadow: 0 0 40px rgba(196,24,24,0.5), 0 0 80px rgba(122,10,10,0.3);
   letter-spacing: 0.02em;
@@ -295,8 +295,8 @@ body::before {
 }
 .gate-watcher-img {
   position: absolute;
-  width: 72vw;
-  height: 72vw;
+  width: min(72vw, 80vh);
+  height: min(72vw, 80vh);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -44%);
@@ -356,8 +356,8 @@ body::before {
   margin-bottom: 32px;
 }
 .gate-relic {
-  width: min(400px, 78vw);
-  height: min(400px, 78vw);
+  width: min(400px, 70vw, 42vh);
+  height: min(400px, 70vw, 42vh);
   margin: 0 auto 34px;
   pointer-events: none;
   opacity: 0;
@@ -900,7 +900,7 @@ main > section:not(.hero) {
 }
 
 .hero-prose {
-  padding: 80px 0 0;
+  padding: clamp(40px, 8vh, 80px) 0 0;
 }
 
 .hero-subtitle {
@@ -1142,7 +1142,7 @@ main > .hero-prose + .creed {
 }
 .history-title {
   font-family: 'UnifrakturCook', serif;
-  font-size: 44px;
+  font-size: clamp(28px, 4.5vw, 44px);
   color: var(--parchment);
   margin-top: 14px;
   margin-bottom: 40px;
@@ -1152,16 +1152,12 @@ main > .hero-prose + .creed {
 .history-body {
   text-align: left;
   font-family: 'EB Garamond', serif;
-  font-size: 17px;
+  font-size: clamp(15px, 1.5vw, 17px);
   line-height: 1.75;
   color: rgba(232,220,184,0.82);
 }
 .history-body p { margin-bottom: 18px; }
 .history-body p:last-child { margin-bottom: 0; }
-@media (max-width: 700px) {
-  .history-title { font-size: 34px; }
-  .history-body { font-size: 16px; line-height: 1.7; }
-}
 
 /* ────────── HISTORY IMAGE PLATE ────────── */
 .history-image {
@@ -1203,7 +1199,7 @@ main > .hero-prose + .creed {
 .litany-head .eyebrow { padding-left: 0.8em; }
 .litany-head h2 {
   font-family: 'UnifrakturCook', serif;
-  font-size: 48px;
+  font-size: clamp(30px, 4.8vw, 48px);
   color: var(--parchment);
   margin-top: 12px;
 }
@@ -1460,6 +1456,89 @@ footer .disclaimer {
 }
 #souls.pulsing { animation: soulPulse 1.3s ease-out forwards; }
 
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE HARDENING — mobile, short landscape, touch
+══════════════════════════════════════════════════════ */
+
+/* Below 600px the gate's orbiting sigils fall outside the viewport
+   (they're positioned with hard-coded ±260px offsets from center).
+   Hide them rather than scale — the pattern is tuned for desktop. */
+@media (max-width: 600px) {
+  .sigils { display: none; }
+}
+
+/* Mobile gate: tighter padding, looser letter-spacing on the button so
+   "Enter by the Pact" stays on one line inside the narrow viewport. */
+@media (max-width: 480px) {
+  .gate-inner {
+    padding: 20px 16px;
+    max-width: 100%;
+  }
+  .gate-button {
+    padding: 14px 22px;
+    font-size: 12px;
+    letter-spacing: 0.28em;
+    gap: 10px;
+  }
+  .gate-prompt { letter-spacing: 0.35em; }
+  .gate-warning { letter-spacing: 0.22em; }
+  .gate-close {
+    top: 12px;
+    right: 12px;
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+  .gate-invocation { margin-bottom: 20px; }
+  .gate-relic { margin: 0 auto 22px; }
+  .gate-rite { gap: 14px; }
+}
+
+/* Topbar fits on one line at phone widths: the 48px desktop gap forces
+   it to 3 rows and eats ~90px above the hero. Also drop hero-subtitle
+   justification — below ~48ch it produces visible word-rivers. */
+@media (max-width: 700px) {
+  .topbar { gap: 10px 20px; padding-bottom: 12px; }
+  .topbar .anno { gap: 14px; flex-wrap: wrap; justify-content: center; }
+  .hero-subtitle { text-align: center; hyphens: manual; }
+}
+
+/* Short landscape viewports on phones/tablets: the vh-anchored skylight
+   ends up overlapping the hero heading. Shrink and reposition it so the
+   heading reads cleanly. Scoped to narrow widths so a short-height but
+   wide docked laptop doesn't lose its full desktop hero. */
+@media (max-height: 640px) and (min-width: 561px) and (max-width: 900px) {
+  .hero {
+    --skylight-diameter: min(26vh, 38vw);
+    --hero-offset: 60px;
+    min-height: auto;
+    padding-top: 32px;
+  }
+  .hero-church, .hero-decay { font-size: clamp(48px, 7vw, 96px); }
+}
+
+@media (max-height: 480px) {
+  .skylight { display: none; }
+  .hero { min-height: auto; padding: 24px 0; }
+  .hero-church, .hero-decay { font-size: clamp(40px, 8vw, 72px); line-height: 0.95; }
+}
+
+/* Extra-narrow phones (≤360px): trim hero heading floor so "Church" and
+   "Decay" don't dominate the entire viewport width. The UnifrakturCook
+   min of 64px at 320px viewport = ~51% of screen; 54px feels better. */
+@media (max-width: 360px) {
+  .hero-church, .hero-decay { font-size: clamp(54px, 16vw, 72px); }
+  main { padding: 24px 16px 48px; }
+  .portal { padding: 28px 20px; min-height: 240px; }
+  .portal-name { font-size: 26px; }
+  .cmd { padding: 22px 18px; }
+}
+
+/* Litany: on tablet portrait (700-960px) the 520px cap leaves wide rails.
+   Widen so the 2-column commandments have breathing room. */
+@media (min-width: 701px) and (max-width: 960px) {
+  .litany { max-width: 720px; }
+}
+
 </style>
 </head>
 <body>
@@ -1603,15 +1682,6 @@ footer .disclaimer {
             <stop offset="100%" stop-color="#5a0a0a"/>
           </linearGradient>
 
-          <!-- Darkened clerestory gradient for the opened casement pane — -->
-          <!-- same stops as clerestoryG with each channel ~halved, so the  -->
-          <!-- swung-open glass reads as "not catching light from behind".  -->
-          <linearGradient id="darkClerestoryG" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stop-color="#806038"/>
-            <stop offset="50%"  stop-color="#70280d"/>
-            <stop offset="100%" stop-color="#2d0505"/>
-          </linearGradient>
-
           <!-- Bottom fade into the arch section below (preserved from prior design). -->
           <linearGradient id="vaultFade" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%"   stop-color="#070101" stop-opacity="0"/>
@@ -1637,8 +1707,8 @@ footer .disclaimer {
           <!-- feet exactly on the opening sill at y=660.                  -->
           <symbol id="crow" viewBox="0 0 60 48">
             <path d="M 18 22 Q 30 16 48 22 Q 56 28 48 36 Q 30 40 18 36 Q 12 29 18 22 Z"
-                  fill="#0a0604"/>
-            <circle cx="17" cy="17" r="5" fill="#0a0604"/>
+                  fill="#120806"/>
+            <circle cx="17" cy="17" r="5" fill="#120806"/>
             <path d="M 12 16 L 4 17 L 12 18 Z" fill="#050302"/>
             <circle cx="15" cy="16" r="0.8" fill="#c44418"/>
             <g stroke="#1a0e06" stroke-width="0.6" fill="none" stroke-linecap="round">
@@ -1654,6 +1724,15 @@ footer .disclaimer {
               <line x1="24" y1="38" x2="24" y2="47"/>
               <line x1="30" y1="38" x2="30" y2="47"/>
             </g>
+            <!-- Warm rim-light: interior firelight catching the back of the   -->
+            <!-- body and the crown of the head so the silhouette reads on the -->
+            <!-- near-black night-sky opening behind it.                        -->
+            <path d="M 18 22 Q 30 16 48 22"
+                  fill="none" stroke="#ffb870" stroke-width="1.1"
+                  stroke-opacity="0.9" stroke-linecap="round"/>
+            <path d="M 13 14 A 5 5 0 0 1 22 16"
+                  fill="none" stroke="#ffb870" stroke-width="0.8"
+                  stroke-opacity="0.7" stroke-linecap="round"/>
           </symbol>
         </defs>
 
@@ -1725,41 +1804,15 @@ footer .disclaimer {
           <path d="M 170 660 L 170 295 Q 170 220 200 220 Q 230 220 230 295 L 230 660 Z"
                 fill="url(#clerestoryG)" opacity="0.92"
                 stroke="#2a0a0a" stroke-width="2" stroke-opacity="0.7"/>
-          <!-- Right inner — intact upper + opened casement with a crow. -->
-          <!-- The lancet arched top + upper 2/3 stay as stained glass; the  -->
-          <!-- lower third is an opening with night sky behind, a swung pane -->
-          <!-- hinged on its left edge, and a crow perched on the sill.      -->
+          <!-- Right inner — intact stained-glass lancet with a crow perched -->
+          <!-- at sill level, silhouetted against the glass.                 -->
           <g id="right-inner-lancet">
-            <!-- Cool interior-wall patch — night air leaking in, sits on    -->
-            <!-- the stone wall below the sill. Drawn first so the frame,    -->
-            <!-- pane and crow layer on top.                                 -->
-            <ellipse cx="1400" cy="720" rx="80" ry="40" fill="#1a2030" opacity="0.15"/>
-            <!-- Upper lancet body: arched top + upper 2/3, ending y=540. -->
-            <path d="M 1370 540 L 1370 295 Q 1370 220 1400 220 Q 1430 220 1430 295 L 1430 540 Z"
+            <path d="M 1370 660 L 1370 295 Q 1370 220 1400 220 Q 1430 220 1430 295 L 1430 660 Z"
                   fill="url(#clerestoryG)" opacity="0.92"
                   stroke="#2a0a0a" stroke-width="2" stroke-opacity="0.7"/>
-            <!-- Night sky behind the opening. -->
-            <rect x="1370" y="540" width="60" height="120" fill="#05060a"/>
-            <!-- Three faint stars, hand-placed. -->
-            <circle cx="1384" cy="566" r="0.6" fill="#e0e0f0" opacity="0.6"/>
-            <circle cx="1413" cy="588" r="0.6" fill="#e0e0f0" opacity="0.6"/>
-            <circle cx="1395" cy="628" r="0.6" fill="#e0e0f0" opacity="0.6"/>
-            <!-- Stone frame: left jamb, sill, right jamb around the opening. -->
-            <path d="M 1370 540 L 1370 660 L 1430 660 L 1430 540"
-                  fill="none" stroke="#2a0a0a" stroke-width="2"/>
-            <!-- Opened casement pane — hinged on left edge (x=1370, y=600). -->
-            <!-- rotate(-35) swings the pane counter-clockwise, the trailing  -->
-            <!-- (right) edge catching warm interior light.                    -->
-            <g transform="rotate(-35 1370 600)">
-              <rect x="1370" y="540" width="60" height="120"
-                    fill="url(#darkClerestoryG)" opacity="0.9"
-                    stroke="#2a0a0a" stroke-width="1" stroke-opacity="0.6"/>
-              <line x1="1430" y1="540" x2="1430" y2="660"
-                    stroke="#ffb870" stroke-width="1" stroke-linecap="round"/>
-            </g>
             <!-- Crow perched on the sill, with a gentle 6s breath. -->
             <g class="crow-breath">
-              <use href="#crow" x="1373" y="633" width="34" height="27"/>
+              <use href="#crow" x="1377" y="624" width="46" height="37"/>
             </g>
           </g>
           <!-- Right outer -->
@@ -1769,30 +1822,55 @@ footer .disclaimer {
         </g>
 
         <!-- Layer 6b: Boards nailed over the two left lancets in an X      -->
-        <!-- pattern — 8 diagonal planks per lancet (4 stacked X crosses).   -->
-        <!-- Each X has a \ plank (rotated +55°) and a / plank (rotated      -->
-        <!-- -55°) sharing the same centre, giving a condemned-window       -->
-        <!-- crosshatched look while the arched top stays bare so the       -->
-        <!-- stained-glass colour still leaks through above the boards.     -->
+        <!-- pattern — 4 X crosses per lancet, each with its own geometry.   -->
+        <!-- Variety rules:                                                  -->
+        <!--   • WIDE/FLAT X   = shallow angle pair (±38°/±42°), med length -->
+        <!--   • TALL/NARROW X = steep angle pair (±58°/±60°), long length  -->
+        <!--     (steep planks project mostly vertical, so they MUST be     -->
+        <!--      long enough for their ends to still cross the 60-wide    -->
+        <!--      lancet and bite into the stone wall on both sides)       -->
+        <!--   • SMALL/COMPACT X = shallow angles + short planks            -->
+        <!--   • LARGE/ASYMMETRIC X = mismatched angles, longest planks     -->
+        <!-- Every plank's (w/2)*cos(angle) is ≥ ~37 from its centre, so    -->
+        <!-- both ends clear the lancet's x-range and visibly nail into the -->
+        <!-- surrounding stone rather than floating on the stained glass.   -->
+        <!-- Pivot cx/cy on every <use> still matches the jittered rect     -->
+        <!-- centre (x + width/2, y + 8) so the plank rotates in place.    -->
         <g id="left-boards">
-          <!-- Left outer lancet (x 30–90, body y 265–620): 4 X crosses. -->
-          <use href="#plank" x="0" y="312" width="120" height="16" transform="rotate(55 60 320)"/>
-          <use href="#plank" x="0" y="312" width="120" height="16" transform="rotate(-55 60 320)"/>
-          <use href="#plank" x="0" y="402" width="120" height="16" transform="rotate(55 60 410)"/>
-          <use href="#plank" x="0" y="402" width="120" height="16" transform="rotate(-55 60 410)"/>
-          <use href="#plank" x="0" y="492" width="120" height="16" transform="rotate(55 60 500)"/>
-          <use href="#plank" x="0" y="492" width="120" height="16" transform="rotate(-55 60 500)"/>
-          <use href="#plank" x="0" y="582" width="120" height="16" transform="rotate(55 60 590)"/>
-          <use href="#plank" x="0" y="582" width="120" height="16" transform="rotate(-55 60 590)"/>
-          <!-- Left inner lancet (x 170–230, body y 295–660): 4 X crosses. -->
-          <use href="#plank" x="140" y="342" width="120" height="16" transform="rotate(55 200 350)"/>
-          <use href="#plank" x="140" y="342" width="120" height="16" transform="rotate(-55 200 350)"/>
-          <use href="#plank" x="140" y="432" width="120" height="16" transform="rotate(55 200 440)"/>
-          <use href="#plank" x="140" y="432" width="120" height="16" transform="rotate(-55 200 440)"/>
-          <use href="#plank" x="140" y="522" width="120" height="16" transform="rotate(55 200 530)"/>
-          <use href="#plank" x="140" y="522" width="120" height="16" transform="rotate(-55 200 530)"/>
-          <use href="#plank" x="140" y="612" width="120" height="16" transform="rotate(55 200 620)"/>
-          <use href="#plank" x="140" y="612" width="120" height="16" transform="rotate(-55 200 620)"/>
+          <!-- Left outer lancet (x 30–90, body y 265–620): 4 X crosses.    -->
+          <!-- X1 — WIDE/FLAT: shallow angles spread the X horizontally. -->
+          <use href="#plank" x="-6"  y="310" width="128" height="16" transform="rotate(38 58 318)"/>
+          <use href="#plank" x="1"   y="314" width="124" height="16" transform="rotate(-42 63 322)"/>
+          <!-- X2 — TALL/NARROW: moderated angles + long planks that bite   -->
+          <!-- past both jambs despite the steep vertical projection.       -->
+          <use href="#plank" x="-14" y="400" width="152" height="16" transform="rotate(58 62 408)"/>
+          <use href="#plank" x="-22" y="405" width="160" height="16" transform="rotate(-60 58 413)"/>
+          <!-- X3 — FLATTEST: shallow angles + full-length planks so both  -->
+          <!-- ends sink deeply into the stone (was SMALL/COMPACT but the  -->
+          <!-- short planks' end-slivers in stone were too thin to read as -->
+          <!-- nailed; lengthened so each end overhangs the jamb by ~22+). -->
+          <use href="#plank" x="-8"  y="494" width="132" height="16" transform="rotate(35 58 502)"/>
+          <use href="#plank" x="-8"  y="490" width="140" height="16" transform="rotate(-42 62 498)"/>
+          <!-- X4 — LARGE/ASYMMETRIC: mismatched angles, uneven arms. -->
+          <use href="#plank" x="-10" y="578" width="132" height="16" transform="rotate(45 56 586)"/>
+          <use href="#plank" x="-6"  y="584" width="140" height="16" transform="rotate(-55 64 592)"/>
+          <!-- Left inner lancet (x 170–230, body y 295–660): 4 X crosses.  -->
+          <!-- X1 — MEDIUM ASYMMETRIC: one steeper \, one shallower /.    -->
+          <use href="#plank" x="123" y="338" width="150" height="16" transform="rotate(58 198 346)"/>
+          <use href="#plank" x="140" y="343" width="128" height="16" transform="rotate(-48 204 351)"/>
+          <!-- X2 — WIDE/FLAT: low-angle pair, splayed horizontally. -->
+          <use href="#plank" x="140" y="433" width="128" height="16" transform="rotate(42 204 441)"/>
+          <use href="#plank" x="134" y="430" width="124" height="16" transform="rotate(-38 196 438)"/>
+          <!-- X3 — TALL/NARROW, widened: steep angles kept to preserve   -->
+          <!-- the vertical stretch, but planks lengthened so both ends    -->
+          <!-- sink deeply into the stone on either jamb (steep planks    -->
+          <!-- need more horizontal reach than shallow ones to *look*     -->
+          <!-- anchored, since their end-sliver projects mostly vertical).-->
+          <use href="#plank" x="103" y="524" width="200" height="16" transform="rotate(58 203 532)"/>
+          <use href="#plank" x="101" y="519" width="190" height="16" transform="rotate(-60 196 527)"/>
+          <!-- X4 — SMALL/COMPACT: short planks + shallow angles.          -->
+          <use href="#plank" x="148" y="611" width="108" height="16" transform="rotate(40 202 619)"/>
+          <use href="#plank" x="139" y="614" width="116" height="16" transform="rotate(-46 197 622)"/>
         </g>
 
         <!-- Layer 7: Clerestory light wash — soft reddish glow bleeding onto stone -->
@@ -1850,6 +1928,22 @@ footer .disclaimer {
           <stop offset="50%" stop-color="#6a1010"/>
           <stop offset="100%" stop-color="#3a0505"/>
         </linearGradient>
+        <!-- Chain fade mask: chains start at y=0 (top of .arches SVG) which
+             is an abrupt cutoff. This mask fades the chain from fully
+             transparent at the top to fully opaque by the midpoint of the
+             banner chain (y=135), so the chain dissolves into the darkness
+             above instead of terminating on a hard line. Lantern chains
+             (0 → 225) share this mask — their attach point at y=225 is
+             deep in the opaque zone. -->
+        <linearGradient id="chainFadeG" x1="0" y1="0" x2="0" y2="220" gradientUnits="userSpaceOnUse">
+          <stop offset="0"    stop-color="#000"/>
+          <stop offset="0.35" stop-color="#000"/>
+          <stop offset="0.75" stop-color="#555"/>
+          <stop offset="1"    stop-color="#fff"/>
+        </linearGradient>
+        <mask id="chainFade" maskUnits="userSpaceOnUse" x="0" y="0" width="1600" height="2700">
+          <rect x="0" y="0" width="1600" height="2700" fill="url(#chainFadeG)"/>
+        </mask>
         <symbol id="codBanner" viewBox="0 0 100 260">
           <!-- Cloth -->
           <path d="M 0 0 L 100 0 L 100 220 L 50 260 L 0 220 Z" fill="url(#bannerClothG)"/>
@@ -1868,47 +1962,51 @@ footer .disclaimer {
            Rope length increased 0.5x — chain now runs 0 → 270, banner top at y=270. -->
       <!-- Left chain + banner — centered on x=500 -->
       <g style="transform-origin: 500px 0; animation: bannerSway 8s ease-in-out infinite;">
-        <path d="M 500 0 L 500 270" stroke="#1a0e06" stroke-width="2"/>
-        <g fill="none" stroke="#2a1810" stroke-width="1">
-          <circle cx="500" cy="12"  r="2.5"/>
-          <circle cx="500" cy="28"  r="2.5"/>
-          <circle cx="500" cy="44"  r="2.5"/>
-          <circle cx="500" cy="60"  r="2.5"/>
-          <circle cx="500" cy="76"  r="2.5"/>
-          <circle cx="500" cy="92"  r="2.5"/>
-          <circle cx="500" cy="108" r="2.5"/>
-          <circle cx="500" cy="124" r="2.5"/>
-          <circle cx="500" cy="140" r="2.5"/>
-          <circle cx="500" cy="156" r="2.5"/>
-          <circle cx="500" cy="172" r="2.5"/>
-          <circle cx="500" cy="188" r="2.5"/>
-          <circle cx="500" cy="204" r="2.5"/>
-          <circle cx="500" cy="220" r="2.5"/>
-          <circle cx="500" cy="236" r="2.5"/>
-          <circle cx="500" cy="252" r="2.5"/>
+        <g mask="url(#chainFade)">
+          <path d="M 500 0 L 500 270" stroke="#1a0e06" stroke-width="2"/>
+          <g fill="none" stroke="#2a1810" stroke-width="1">
+            <circle cx="500" cy="12"  r="2.5"/>
+            <circle cx="500" cy="28"  r="2.5"/>
+            <circle cx="500" cy="44"  r="2.5"/>
+            <circle cx="500" cy="60"  r="2.5"/>
+            <circle cx="500" cy="76"  r="2.5"/>
+            <circle cx="500" cy="92"  r="2.5"/>
+            <circle cx="500" cy="108" r="2.5"/>
+            <circle cx="500" cy="124" r="2.5"/>
+            <circle cx="500" cy="140" r="2.5"/>
+            <circle cx="500" cy="156" r="2.5"/>
+            <circle cx="500" cy="172" r="2.5"/>
+            <circle cx="500" cy="188" r="2.5"/>
+            <circle cx="500" cy="204" r="2.5"/>
+            <circle cx="500" cy="220" r="2.5"/>
+            <circle cx="500" cy="236" r="2.5"/>
+            <circle cx="500" cy="252" r="2.5"/>
+          </g>
         </g>
         <use href="#codBanner" x="450" y="270" width="100" height="260"/>
       </g>
       <!-- Right chain + banner — centered on x=1100 (mirror) -->
       <g style="transform-origin: 1100px 0; animation: bannerSway 9s ease-in-out infinite reverse;">
-        <path d="M 1100 0 L 1100 270" stroke="#1a0e06" stroke-width="2"/>
-        <g fill="none" stroke="#2a1810" stroke-width="1">
-          <circle cx="1100" cy="12"  r="2.5"/>
-          <circle cx="1100" cy="28"  r="2.5"/>
-          <circle cx="1100" cy="44"  r="2.5"/>
-          <circle cx="1100" cy="60"  r="2.5"/>
-          <circle cx="1100" cy="76"  r="2.5"/>
-          <circle cx="1100" cy="92"  r="2.5"/>
-          <circle cx="1100" cy="108" r="2.5"/>
-          <circle cx="1100" cy="124" r="2.5"/>
-          <circle cx="1100" cy="140" r="2.5"/>
-          <circle cx="1100" cy="156" r="2.5"/>
-          <circle cx="1100" cy="172" r="2.5"/>
-          <circle cx="1100" cy="188" r="2.5"/>
-          <circle cx="1100" cy="204" r="2.5"/>
-          <circle cx="1100" cy="220" r="2.5"/>
-          <circle cx="1100" cy="236" r="2.5"/>
-          <circle cx="1100" cy="252" r="2.5"/>
+        <g mask="url(#chainFade)">
+          <path d="M 1100 0 L 1100 270" stroke="#1a0e06" stroke-width="2"/>
+          <g fill="none" stroke="#2a1810" stroke-width="1">
+            <circle cx="1100" cy="12"  r="2.5"/>
+            <circle cx="1100" cy="28"  r="2.5"/>
+            <circle cx="1100" cy="44"  r="2.5"/>
+            <circle cx="1100" cy="60"  r="2.5"/>
+            <circle cx="1100" cy="76"  r="2.5"/>
+            <circle cx="1100" cy="92"  r="2.5"/>
+            <circle cx="1100" cy="108" r="2.5"/>
+            <circle cx="1100" cy="124" r="2.5"/>
+            <circle cx="1100" cy="140" r="2.5"/>
+            <circle cx="1100" cy="156" r="2.5"/>
+            <circle cx="1100" cy="172" r="2.5"/>
+            <circle cx="1100" cy="188" r="2.5"/>
+            <circle cx="1100" cy="204" r="2.5"/>
+            <circle cx="1100" cy="220" r="2.5"/>
+            <circle cx="1100" cy="236" r="2.5"/>
+            <circle cx="1100" cy="252" r="2.5"/>
+          </g>
         </g>
         <use href="#codBanner" x="1050" y="270" width="100" height="260"/>
       </g>
@@ -1946,48 +2044,52 @@ footer .disclaimer {
 
       <!-- Left caged lantern — x=620, chain from roof -->
       <g style="transform-origin: 620px 0; animation: bannerSway 7s ease-in-out infinite;">
-        <path d="M 620 0 L 620 225" stroke="#1a0e06" stroke-width="1.8"/>
-        <g fill="none" stroke="#2a1810" stroke-width="1">
-          <circle cx="620" cy="10"  r="2.2"/>
-          <circle cx="620" cy="24"  r="2.2"/>
-          <circle cx="620" cy="38"  r="2.2"/>
-          <circle cx="620" cy="52"  r="2.2"/>
-          <circle cx="620" cy="66"  r="2.2"/>
-          <circle cx="620" cy="80"  r="2.2"/>
-          <circle cx="620" cy="94"  r="2.2"/>
-          <circle cx="620" cy="108" r="2.2"/>
-          <circle cx="620" cy="122" r="2.2"/>
-          <circle cx="620" cy="136" r="2.2"/>
-          <circle cx="620" cy="150" r="2.2"/>
-          <circle cx="620" cy="164" r="2.2"/>
-          <circle cx="620" cy="178" r="2.2"/>
-          <circle cx="620" cy="192" r="2.2"/>
-          <circle cx="620" cy="206" r="2.2"/>
-          <circle cx="620" cy="220" r="2.2"/>
+        <g mask="url(#chainFade)">
+          <path d="M 620 0 L 620 225" stroke="#1a0e06" stroke-width="1.8"/>
+          <g fill="none" stroke="#2a1810" stroke-width="1">
+            <circle cx="620" cy="10"  r="2.2"/>
+            <circle cx="620" cy="24"  r="2.2"/>
+            <circle cx="620" cy="38"  r="2.2"/>
+            <circle cx="620" cy="52"  r="2.2"/>
+            <circle cx="620" cy="66"  r="2.2"/>
+            <circle cx="620" cy="80"  r="2.2"/>
+            <circle cx="620" cy="94"  r="2.2"/>
+            <circle cx="620" cy="108" r="2.2"/>
+            <circle cx="620" cy="122" r="2.2"/>
+            <circle cx="620" cy="136" r="2.2"/>
+            <circle cx="620" cy="150" r="2.2"/>
+            <circle cx="620" cy="164" r="2.2"/>
+            <circle cx="620" cy="178" r="2.2"/>
+            <circle cx="620" cy="192" r="2.2"/>
+            <circle cx="620" cy="206" r="2.2"/>
+            <circle cx="620" cy="220" r="2.2"/>
+          </g>
         </g>
         <use href="#cagedLantern" x="595" y="225" width="50" height="88"/>
       </g>
 
       <!-- Right caged lantern — x=980 (mirror) -->
       <g style="transform-origin: 980px 0; animation: bannerSway 7.5s ease-in-out infinite reverse;">
-        <path d="M 980 0 L 980 225" stroke="#1a0e06" stroke-width="1.8"/>
-        <g fill="none" stroke="#2a1810" stroke-width="1">
-          <circle cx="980" cy="10"  r="2.2"/>
-          <circle cx="980" cy="24"  r="2.2"/>
-          <circle cx="980" cy="38"  r="2.2"/>
-          <circle cx="980" cy="52"  r="2.2"/>
-          <circle cx="980" cy="66"  r="2.2"/>
-          <circle cx="980" cy="80"  r="2.2"/>
-          <circle cx="980" cy="94"  r="2.2"/>
-          <circle cx="980" cy="108" r="2.2"/>
-          <circle cx="980" cy="122" r="2.2"/>
-          <circle cx="980" cy="136" r="2.2"/>
-          <circle cx="980" cy="150" r="2.2"/>
-          <circle cx="980" cy="164" r="2.2"/>
-          <circle cx="980" cy="178" r="2.2"/>
-          <circle cx="980" cy="192" r="2.2"/>
-          <circle cx="980" cy="206" r="2.2"/>
-          <circle cx="980" cy="220" r="2.2"/>
+        <g mask="url(#chainFade)">
+          <path d="M 980 0 L 980 225" stroke="#1a0e06" stroke-width="1.8"/>
+          <g fill="none" stroke="#2a1810" stroke-width="1">
+            <circle cx="980" cy="10"  r="2.2"/>
+            <circle cx="980" cy="24"  r="2.2"/>
+            <circle cx="980" cy="38"  r="2.2"/>
+            <circle cx="980" cy="52"  r="2.2"/>
+            <circle cx="980" cy="66"  r="2.2"/>
+            <circle cx="980" cy="80"  r="2.2"/>
+            <circle cx="980" cy="94"  r="2.2"/>
+            <circle cx="980" cy="108" r="2.2"/>
+            <circle cx="980" cy="122" r="2.2"/>
+            <circle cx="980" cy="136" r="2.2"/>
+            <circle cx="980" cy="150" r="2.2"/>
+            <circle cx="980" cy="164" r="2.2"/>
+            <circle cx="980" cy="178" r="2.2"/>
+            <circle cx="980" cy="192" r="2.2"/>
+            <circle cx="980" cy="206" r="2.2"/>
+            <circle cx="980" cy="220" r="2.2"/>
+          </g>
         </g>
         <use href="#cagedLantern" x="955" y="225" width="50" height="88"/>
       </g>
