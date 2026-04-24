@@ -416,6 +416,15 @@ body::before {
   left: 0;
   width: 100%;
   height: 300vh;
+  /* Hide the cathedral backdrop in the hero viewport so the skylight sits
+     against a clean dark field. Fade in below 80vh so the arches and
+     architectural detail are visible in history/creed/gates sections. */
+  -webkit-mask-image: linear-gradient(to bottom,
+      transparent 0, transparent 80vh,
+      black 110vh, black 100%);
+  mask-image: linear-gradient(to bottom,
+      transparent 0, transparent 80vh,
+      black 110vh, black 100%);
 }
 @keyframes bannerSway {
   0%, 100% { transform: rotate(-1.5deg); }
@@ -495,126 +504,154 @@ body::before {
   100% { transform: translate(-10vmax, 6vmax) scale(0.9); }
 }
 
-/* Vaulted stone ceiling that frames the skylight.
-   width is viewport-relative (not hero-relative) so the stone fades into
-   the page background at the viewport edges rather than snapping to the
-   narrower .hero column, per Spec §5.2 ("full-width up to ~1600px"). */
-.vault {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100vw;
-  max-width: 1600px;
-  height: 75vh;
-  pointer-events: none;
-  z-index: 0;
+/* Skylight size is a shared custom property so the hero padding and the
+   skylight geometry scale together. */
+.hero {
+  --skylight-diameter: min(41vmin, 435px);
+  --skylight-top: 8vh;
 }
 
-/* Skylight oculus — horned-skull lead-came stained glass set in the vault */
+/* Skylight — horned-skull lead-came stained glass as hero focal point.
+   overflow:hidden + border-radius:50% clip the scaled came PNG to a circle,
+   so horn tips that extend past the ring get cut at the ring edge rather
+   than floating past it. The ring's border, drawn last (source order), then
+   covers the inner strip of the cut for a clean circular termination. */
 .skylight {
   position: absolute;
-  top: 8vh;
+  top: var(--skylight-top);
   left: 50%;
   transform: translateX(-50%);
-  width: min(64vmin, 680px);
+  width: var(--skylight-diameter);
   aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  overflow: hidden;
   z-index: 1;
   pointer-events: none;
+  /* Emissive bleed — warm light escaping the window into the surrounding
+     dark field. Three-stop falloff: tight close-range bloom, medium
+     ambient wash, far atmospheric tint. box-shadow on the container
+     (not the ring) so it paints OUTSIDE overflow:hidden. */
+  box-shadow:
+    0 0 22px rgba(255,120,50,0.40),
+    0 0 70px rgba(255,80,30,0.28),
+    0 0 160px rgba(255,40,14,0.18),
+    0 0 320px rgba(200,20,10,0.10);
 }
 
-/* Colored stained-glass light coming through the panes.
-   Palette pulled from the existing rose's shard colors so the new skylight
-   is family with the rest of the site. */
+/* Emissive red-glass composition — panes backlit from behind the window.
+   Palette runs white (light source) → pale yellow → amber → orange-red →
+   bright red → deep blood red. Each stop is a physical point on the
+   transmission curve of red glass: thinnest glass passes nearly all
+   light (white); thickest glass absorbs most (deep red). The came, on
+   top, divides this continuous field into cells so it reads as glass
+   not as a sun — the structure comes from the overlay, the light from
+   the gradient. */
 .skylight-glow {
   position: absolute;
   inset: 4%;
-  border-radius: 50%;            /* keeps the glow boundary circular, not square */
-  background:
-    radial-gradient(circle at 50% 45%,
-      #ffd6a8 0%,
-      #ff8a3a 6%,
-      #e04018 14%,
-      #c83010 28%,
-      #8c0c0c 48%,
-      #5a0a0a 68%,
-      #2a0404 84%,
-      transparent 95%);
-  filter: blur(2px);
-}
-
-/* Faceted pane variation overlay — breaks the smooth radial into shards.
-   If this muddies the result during visual review, set display: none and ship without. */
-.skylight-shards {
-  position: absolute;
-  inset: 8%;
   border-radius: 50%;
   background:
-    conic-gradient(from 25deg at 50% 50%,
-      rgba(224,64,24,0)   0deg,
-      rgba(255,180,90,0.18) 18deg,
-      rgba(196,24,24,0)   36deg,
-      rgba(255,180,90,0.12) 54deg,
-      rgba(140,12,12,0)   72deg,
-      rgba(255,180,90,0.20) 95deg,
-      rgba(196,24,24,0)  115deg,
-      rgba(255,200,120,0.15) 145deg,
-      rgba(120,8,8,0)    175deg,
-      rgba(255,180,90,0.22) 200deg,
-      rgba(160,16,16,0)  230deg,
-      rgba(255,180,90,0.16) 260deg,
-      rgba(140,12,12,0)  290deg,
-      rgba(255,200,120,0.20) 320deg,
-      rgba(196,24,24,0)  360deg);
-  mix-blend-mode: screen;
-  filter: blur(8px);
-  opacity: 0.7;
+    /* Bright off-center cells — thinnest/palest panes catching the most
+       light. Positioned at asymmetric points so luminance reads as
+       distributed highlights, not a single solar disc. */
+    radial-gradient(circle at 40% 28%, rgba(255,252,240,0.95) 0%, rgba(255,244,210,0.35) 8%, transparent 14%),
+    radial-gradient(circle at 62% 34%, rgba(255,248,230,0.80) 0%, rgba(255,238,200,0.30) 8%, transparent 14%),
+    radial-gradient(circle at 30% 62%, rgba(255,232,180,0.55) 0%, transparent 10%),
+    radial-gradient(circle at 72% 60%, rgba(255,228,170,0.50) 0%, transparent 10%),
+
+    /* Main emissive radial — hot center radiating outward through reds
+       of increasing thickness. Centered slightly above middle so the
+       overall backlighting feels overhead (sun through oculus). */
+    radial-gradient(circle at 50% 44%,
+      #fff4dc  0%,
+      #ffe89c  8%,
+      #ffb048 18%,
+      #ff5a1c 30%,
+      #d82018 46%,
+      #a81018 62%,
+      #781014 78%,
+      #4a0810 92%,
+      #2a0408 100%);
+  filter: blur(1px) saturate(1.2) brightness(1.05);
 }
 
-/* The lead-came pattern itself — sits cleanly on top thanks to alpha background */
+/* Black came perimeter — painted on top of the scaled icon (source-order
+   last) so it overlays/clips the icon at the ring boundary. Pure solid
+   black, no inset shadows: any inset gradient reads as a beveled edge
+   (a bezel) rather than a flat painted-on annulus. Thickness matches
+   the came PNG's stroke weight at render scale so the ring reads as
+   the outermost segment of the same tracery, not a separate frame. */
+.skylight-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 12px solid #000;
+  pointer-events: none;
+}
+
+/* Individual bright pane accents — cells of the palest glass transmitting
+   near-white light. Screen blend adds brightness additively on top of the
+   red field, reinforcing the emissive backlit quality. */
+.skylight-shards {
+  position: absolute;
+  inset: 5%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle 9% at 28% 24%, rgba(255,250,230,0.95) 0%, rgba(255,240,200,0.45) 40%, transparent 75%),
+    radial-gradient(circle 7% at 72% 22%, rgba(255,248,225,0.85) 0%, rgba(255,235,190,0.40) 40%, transparent 75%),
+    radial-gradient(circle 8% at 82% 68%, rgba(255,220,160,0.65) 0%, rgba(255,180,120,0.28) 40%, transparent 75%);
+  mix-blend-mode: screen;
+  filter: blur(1.5px);
+  opacity: 1;
+}
+
+/* The lead came itself. The black of the PNG sits over the colored panes;
+   drop-shadows simulate the depth of real lead on glass (lead casts a
+   soft shadow inward toward the glass it holds). Colored tint is removed
+   — authentic came is just matte black/dark iron.
+   transform: scale(1.38) enlarges the came content (which only fills ~70%
+   of the PNG canvas) so it extends to the iron ring edge, making the ring
+   wrap the icon instead of framing empty glass around it. Anything beyond
+   the ring is transparent PNG padding, so there's nothing to clip. */
 .skylight-pattern {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: contain;
+  transform: scale(1.52);
+  transform-origin: 50% 50%;
   filter:
-    drop-shadow(0 2px 0 rgba(0,0,0,0.9))
-    drop-shadow(0 0 6px rgba(255,140,40,0.4));
+    drop-shadow(0 1px 0 rgba(0,0,0,0.95))
+    drop-shadow(0 0 3px rgba(0,0,0,0.7))
+    drop-shadow(0 0 10px rgba(30,10,6,0.5));
 }
 
-/* Subtle pulse, like flickering candlelight from above */
+/* Glass imperfection — SVG turbulence gives hand-rolled glass texture.
+   Overlay blend keeps the color, modulates luminance subtly. */
+.skylight::after {
+  content: "";
+  position: absolute;
+  inset: 4%;
+  border-radius: 50%;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' seed='7'/><feColorMatrix values='0 0 0 0 0.08  0 0 0 0 0.06  0 0 0 0 0.04  0 0 0 0.8 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 180px 180px;
+  mix-blend-mode: overlay;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* Saturation wobble — glass doesn't pulse in BRIGHTNESS (that reads as
+   a flaring light source). Instead, a slow hue-richness shift simulates
+   shifting cloud cover outside the window tinting the transmission. */
 @media (prefers-reduced-motion: no-preference) {
   .skylight-glow {
-    animation: skylightPulse 7s ease-in-out infinite;
+    animation: skylightShift 14s ease-in-out infinite;
   }
 }
-@keyframes skylightPulse {
-  0%, 100% { filter: blur(2px) brightness(1); }
-  50%      { filter: blur(2px) brightness(1.12); }
-}
-
-/* Light rays slanting down through the oculus — dust-mote shafts */
-.light-rays {
-  position: absolute;
-  top: 12vh;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80vmin;
-  height: 95vh;
-  pointer-events: none;
-  z-index: 0;
-  background:
-    conic-gradient(from 175deg at 50% 0%,
-      transparent 0deg,
-      rgba(255,180,90,0.07)  3deg,
-      rgba(255,180,90,0.02)  6deg,
-      transparent 10deg,
-      rgba(255,180,90,0.05) 12deg,
-      transparent 18deg,
-      rgba(255,180,90,0.04) 22deg);
-  mix-blend-mode: screen;
-  opacity: 0.55;
+@keyframes skylightShift {
+  0%, 100% { filter: blur(1px) saturate(1.20) brightness(1.05); }
+  50%      { filter: blur(1px) saturate(1.32) brightness(1.12); }
 }
 
 /* Walkers — the faithful pacing the nave */
@@ -746,9 +783,10 @@ main > * + *:not(.hero):not(.hero-prose) {
 /* HERO */
 .hero {
   /* Top padding reserves vertical space for the absolute-positioned .skylight
-     (top: 8vh, height: min(64vmin, 680px)) plus a 30px gap before the eyebrow,
-     per Spec §4 composition. */
-  padding: calc(8vh + min(64vmin, 680px) + 30px) 0 0;
+     plus a 30px gap before the eyebrow. Padding derives from
+     --skylight-diameter and --skylight-top so overriding those custom
+     props in a media query re-derives the whole stack. */
+  padding: calc(var(--skylight-top) + var(--skylight-diameter) + 30px) 0 0;
   min-height: calc(100vh - 140px);
   min-height: calc(100svh - 140px);
   text-align: center;
@@ -924,18 +962,12 @@ main > .hero-prose + .creed {
   .gates { grid-template-columns: 1fr; }
   main { padding: 30px 20px 60px; }
   /* Mobile .hero padding reserves space for the smaller mobile skylight
-     (top: 4vh, height: min(78vmin, 380px)) + a 24px gap to the eyebrow. */
-  .hero { padding: calc(4vh + min(78vmin, 380px) + 24px) 0 40px; }
-  .skylight {
-    width: min(78vmin, 380px);
-    top: 4vh;
-  }
-  .vault {
-    height: 55vh;
-  }
-  .light-rays {
-    opacity: 0.3;
-    height: 70vh;
+     plus a 24px gap to the eyebrow. Override the shared custom props
+     and the padding / skylight geometry follow automatically. */
+  .hero {
+    --skylight-diameter: min(49vmin, 242px);
+    --skylight-top: 4vh;
+    padding: calc(var(--skylight-top) + var(--skylight-diameter) + 24px) 0 40px;
   }
 }
 
@@ -1916,62 +1948,6 @@ footer .disclaimer {
     </header>
 
     <section class="hero">
-      <svg class="vault" viewBox="0 0 1600 750" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
-        <defs>
-          <!-- Stone ceiling: near-opaque at the top, fading to transparent as it
-               approaches the oculus edge so the glow can bleed into the stone. -->
-          <linearGradient id="vaultStone" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stop-color="#120a04"/>
-            <stop offset="55%"  stop-color="#1e140a"/>
-            <stop offset="100%" stop-color="#2a1c10" stop-opacity="0"/>
-          </linearGradient>
-          <linearGradient id="vaultRib" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stop-color="#5a4028"/>
-            <stop offset="100%" stop-color="#1a1008" stop-opacity="0"/>
-          </linearGradient>
-        </defs>
-
-        <!-- Stone ceiling, with a curved opening (oculus) cut through the middle.
-             Full opacity so the stone reads as solid material, not a hint. -->
-        <path d="M 0,0 L 0,580 Q 400,280 800,180 Q 1200,280 1600,580 L 1600,0 Z"
-              fill="url(#vaultStone)"/>
-
-        <!-- Lead came outlining the oculus opening (where stone meets glass) -->
-        <path d="M 0,580 Q 400,280 800,180 Q 1200,280 1600,580"
-              fill="none" stroke="#4a3420" stroke-width="3" opacity="0.9"/>
-        <path d="M 0,610 Q 400,305 800,210 Q 1200,305 1600,610"
-              fill="none" stroke="#1a1008" stroke-width="1.5" opacity="0.65"/>
-
-        <!-- Rib lines living in the ceiling plane (not floor-to-ceiling beams).
-             Each rib starts where the stone ceiling visibly takes over
-             (y ~= 450-500) and curves up to meet the oculus lead came. -->
-        <g stroke="#3a2818" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.9">
-          <path d="M 60 500   Q 340 400  760 300"/>
-          <path d="M 260 470  Q 480 390  780 310"/>
-          <path d="M 480 450  Q 600 380  790 320"/>
-          <path d="M 1540 500 Q 1260 400 840 300"/>
-          <path d="M 1340 470 Q 1120 390 820 310"/>
-          <path d="M 1120 450 Q 1000 380 810 320"/>
-        </g>
-
-        <!-- Faint horizontal stone courses right at the oculus shoulder,
-             so the stone reads as surface, not fog. -->
-        <g stroke="#2a1c10" stroke-width="1" opacity="0.4" fill="none">
-          <path d="M 0 320 Q 400 200 800 160 Q 1200 200 1600 320"/>
-          <path d="M 0 380 Q 400 240 800 190 Q 1200 240 1600 380"/>
-        </g>
-
-        <!-- Short spring-line ribs at the oculus edge — suggests the ribs
-             actually meet the oculus lead came, not just float nearby. -->
-        <g stroke="#5a4028" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.7">
-          <path d="M 760 300 L 720 250"/>
-          <path d="M 780 310 L 750 260"/>
-          <path d="M 790 320 L 780 270"/>
-          <path d="M 840 300 L 880 250"/>
-          <path d="M 820 310 L 850 260"/>
-          <path d="M 810 320 L 820 270"/>
-        </g>
-      </svg>
       <div class="eyebrow">Signatories of the Pact</div>
       <h1 class="hero-heading" aria-label="Church of Decay">
         <span class="hero-church" aria-hidden="true">Church</span>
@@ -1982,8 +1958,8 @@ footer .disclaimer {
         <div class="skylight-glow"></div>
         <div class="skylight-shards"></div>
         <img class="skylight-pattern" src="assets/skylight.webp" alt="" width="1024" height="1024" decoding="async" />
+        <div class="skylight-ring"></div>
       </div>
-      <div class="light-rays" aria-hidden="true"></div>
 
       <div class="divider">
         <span></span>
