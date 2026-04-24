@@ -1,9 +1,17 @@
 # Claude Code dev tooling
 .claude/
 CLAUDE.md
+AGENTS.md
+
+# Codex CLI marker
+.codex
 
 # Playwright MCP session artifacts
 .playwright-mcp/
+
+# Verification screenshots (taken into repo root during UI iteration)
+/*.png
+/*.jpeg
 
 # Superpowers brainstorm artifacts
 .superpowers/
