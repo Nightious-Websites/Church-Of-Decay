@@ -494,25 +494,6 @@ body::before {
   100% { transform: translate(-10vmax, 6vmax) scale(0.9); }
 }
 
-/* Stained-glass rose window behind hero */
-.rose {
-  position: absolute;
-  top: 42vh;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(40vmin, 500px);
-  height: min(40vmin, 500px);
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0.55;
-  mix-blend-mode: screen;
-  filter: blur(1px);
-  animation: rosePulse 6s ease-in-out infinite;
-}
-@keyframes rosePulse {
-  0%, 100% { opacity: 0.45; }
-  50%      { opacity: 0.7; }
-}
 /* Walkers — the faithful pacing the nave */
 .walkers {
   position: absolute;
@@ -694,13 +675,6 @@ main > * + *:not(.hero):not(.hero-prose) {
   margin: 0;
   padding-left: 0.25em;
 }
-.hero-rose-gap {
-  height: calc(min(40vmin, 500px) * 1.05 + 20px);
-  width: 100%;
-  flex-shrink: 0;
-  pointer-events: none;
-}
-
 .hero .divider {
   margin-top: auto;
   margin-bottom: 0;
