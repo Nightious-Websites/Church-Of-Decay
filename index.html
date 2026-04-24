@@ -808,6 +808,8 @@ main > * + *:not(.hero):not(.hero-prose) {
   text-transform: uppercase;
   margin-bottom: 26px;
   padding-left: 0.8em; /* compensate for letter-spacing */
+  position: relative;
+  z-index: 2;
 }
 
 .hero-heading {
@@ -816,6 +818,12 @@ main > * + *:not(.hero):not(.hero-prose) {
   font-weight: 400;
   font-size: inherit;
   text-align: center;
+  /* Hero text always reads in front of the stained-glass skylight (z:1).
+     Without this, .skylight (later in DOM) paints over the bottom of
+     "Decay" at shorter viewports where the heading's fixed-px size
+     crashes into the vh-scaled skylight top. */
+  position: relative;
+  z-index: 2;
 }
 .hero-church,
 .hero-of,
@@ -846,6 +854,8 @@ main > * + *:not(.hero):not(.hero-prose) {
 .hero .divider {
   margin-top: auto;
   margin-bottom: 0;
+  position: relative;
+  z-index: 2;
 }
 
 .scroll-hint {
@@ -856,6 +866,8 @@ main > * + *:not(.hero):not(.hero-prose) {
   color: rgba(232,220,184,0.35);
   text-transform: uppercase;
   text-align: center;
+  position: relative;
+  z-index: 2;
 }
 .scroll-hint-arrow {
   display: block;
