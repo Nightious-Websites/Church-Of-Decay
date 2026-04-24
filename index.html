@@ -494,6 +494,22 @@ body::before {
   100% { transform: translate(-10vmax, 6vmax) scale(0.9); }
 }
 
+/* Vaulted stone ceiling that frames the skylight.
+   width is viewport-relative (not hero-relative) so the stone fades into
+   the page background at the viewport edges rather than snapping to the
+   narrower .hero column, per Spec §5.2 ("full-width up to ~1600px"). */
+.vault {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  max-width: 1600px;
+  height: 75vh;
+  pointer-events: none;
+  z-index: 0;
+}
+
 /* Skylight oculus — horned-skull lead-came stained glass set in the vault */
 .skylight {
   position: absolute;
@@ -1862,6 +1878,62 @@ footer .disclaimer {
     </header>
 
     <section class="hero">
+      <svg class="vault" viewBox="0 0 1600 750" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+        <defs>
+          <!-- Stone ceiling: near-opaque at the top, fading to transparent as it
+               approaches the oculus edge so the glow can bleed into the stone. -->
+          <linearGradient id="vaultStone" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="#120a04"/>
+            <stop offset="55%"  stop-color="#1e140a"/>
+            <stop offset="100%" stop-color="#2a1c10" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="vaultRib" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="#5a4028"/>
+            <stop offset="100%" stop-color="#1a1008" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Stone ceiling, with a curved opening (oculus) cut through the middle.
+             Full opacity so the stone reads as solid material, not a hint. -->
+        <path d="M 0,0 L 0,580 Q 400,280 800,180 Q 1200,280 1600,580 L 1600,0 Z"
+              fill="url(#vaultStone)"/>
+
+        <!-- Lead came outlining the oculus opening (where stone meets glass) -->
+        <path d="M 0,580 Q 400,280 800,180 Q 1200,280 1600,580"
+              fill="none" stroke="#4a3420" stroke-width="3" opacity="0.9"/>
+        <path d="M 0,610 Q 400,305 800,210 Q 1200,305 1600,610"
+              fill="none" stroke="#1a1008" stroke-width="1.5" opacity="0.65"/>
+
+        <!-- Rib lines living in the ceiling plane (not floor-to-ceiling beams).
+             Each rib starts where the stone ceiling visibly takes over
+             (y ~= 450-500) and curves up to meet the oculus lead came. -->
+        <g stroke="#3a2818" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.9">
+          <path d="M 60 500   Q 340 400  760 300"/>
+          <path d="M 260 470  Q 480 390  780 310"/>
+          <path d="M 480 450  Q 600 380  790 320"/>
+          <path d="M 1540 500 Q 1260 400 840 300"/>
+          <path d="M 1340 470 Q 1120 390 820 310"/>
+          <path d="M 1120 450 Q 1000 380 810 320"/>
+        </g>
+
+        <!-- Faint horizontal stone courses right at the oculus shoulder,
+             so the stone reads as surface, not fog. -->
+        <g stroke="#2a1c10" stroke-width="1" opacity="0.4" fill="none">
+          <path d="M 0 320 Q 400 200 800 160 Q 1200 200 1600 320"/>
+          <path d="M 0 380 Q 400 240 800 190 Q 1200 240 1600 380"/>
+        </g>
+
+        <!-- Short spring-line ribs at the oculus edge — suggests the ribs
+             actually meet the oculus lead came, not just float nearby. -->
+        <g stroke="#5a4028" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.7">
+          <path d="M 760 300 L 720 250"/>
+          <path d="M 780 310 L 750 260"/>
+          <path d="M 790 320 L 780 270"/>
+          <path d="M 840 300 L 880 250"/>
+          <path d="M 820 310 L 850 260"/>
+          <path d="M 810 320 L 820 270"/>
+        </g>
+      </svg>
       <div class="eyebrow">Signatories of the Pact</div>
       <h1 class="hero-heading" aria-label="Church of Decay">
         <span class="hero-church" aria-hidden="true">Church</span>
