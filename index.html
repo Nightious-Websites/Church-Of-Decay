@@ -427,6 +427,13 @@ body::before {
   0%, 100% { transform: rotate(-0.8deg); }
   50%      { transform: rotate(0.8deg); }
 }
+@keyframes crowBreath {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-0.6px); }
+}
+.crow-breath {
+  animation: crowBreath 6s ease-in-out infinite;
+}
 
 .arch {
   position: absolute;
@@ -1596,12 +1603,58 @@ footer .disclaimer {
             <stop offset="100%" stop-color="#5a0a0a"/>
           </linearGradient>
 
+          <!-- Darkened clerestory gradient for the opened casement pane — -->
+          <!-- same stops as clerestoryG with each channel ~halved, so the  -->
+          <!-- swung-open glass reads as "not catching light from behind".  -->
+          <linearGradient id="darkClerestoryG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="#806038"/>
+            <stop offset="50%"  stop-color="#70280d"/>
+            <stop offset="100%" stop-color="#2d0505"/>
+          </linearGradient>
+
           <!-- Bottom fade into the arch section below (preserved from prior design). -->
           <linearGradient id="vaultFade" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%"   stop-color="#070101" stop-opacity="0"/>
             <stop offset="53%"  stop-color="#070101" stop-opacity="0.92"/>
             <stop offset="100%" stop-color="#070101" stop-opacity="0.06"/>
           </linearGradient>
+
+          <!-- Plank: a single nailed board, 120×16 in local units, with a  -->
+          <!-- subtle top-edge grain highlight and two nail dots near each   -->
+          <!-- end. Re-used 16× for the left-lancet X pattern, each <use>   -->
+          <!-- rotated ±55° around its own centre. Length overhangs each    -->
+          <!-- 60-unit-wide lancet, reading as boards nailed past the frame. -->
+          <symbol id="plank" viewBox="0 0 120 16">
+            <rect x="0" y="0" width="120" height="16" fill="#2a1810"/>
+            <line x1="0" y1="0.4" x2="120" y2="0.4" stroke="#4a2a14" stroke-width="0.8"/>
+            <circle cx="6" cy="8" r="1.2" fill="#1a0e06"/>
+            <circle cx="114" cy="8" r="1.2" fill="#1a0e06"/>
+          </symbol>
+
+          <!-- Crow silhouette perched on the open casement sill. -->
+          <!-- Left-facing (head at viewBox-left, tail at viewBox-right).  -->
+          <!-- Designed with feet near y=48 so a <use height=27> puts the  -->
+          <!-- feet exactly on the opening sill at y=660.                  -->
+          <symbol id="crow" viewBox="0 0 60 48">
+            <path d="M 18 22 Q 30 16 48 22 Q 56 28 48 36 Q 30 40 18 36 Q 12 29 18 22 Z"
+                  fill="#0a0604"/>
+            <circle cx="17" cy="17" r="5" fill="#0a0604"/>
+            <path d="M 12 16 L 4 17 L 12 18 Z" fill="#050302"/>
+            <circle cx="15" cy="16" r="0.8" fill="#c44418"/>
+            <g stroke="#1a0e06" stroke-width="0.6" fill="none" stroke-linecap="round">
+              <path d="M 24 24 Q 32 23 40 25"/>
+              <path d="M 24 28 Q 34 27 44 29"/>
+              <path d="M 26 32 Q 36 31 46 33"/>
+            </g>
+            <g stroke="#1a0e06" stroke-width="0.6" fill="none" stroke-linecap="round">
+              <path d="M 48 28 L 58 30"/>
+              <path d="M 48 32 L 56 36"/>
+            </g>
+            <g stroke="#050302" stroke-width="0.9" stroke-linecap="round">
+              <line x1="24" y1="38" x2="24" y2="47"/>
+              <line x1="30" y1="38" x2="30" y2="47"/>
+            </g>
+          </symbol>
         </defs>
 
         <!-- Layer 1: Stone base plane -->
@@ -1672,19 +1725,79 @@ footer .disclaimer {
           <path d="M 170 660 L 170 295 Q 170 220 200 220 Q 230 220 230 295 L 230 660 Z"
                 fill="url(#clerestoryG)" opacity="0.92"
                 stroke="#2a0a0a" stroke-width="2" stroke-opacity="0.7"/>
-          <!-- Right inner -->
-          <path d="M 1370 660 L 1370 295 Q 1370 220 1400 220 Q 1430 220 1430 295 L 1430 660 Z"
-                fill="url(#clerestoryG)" opacity="0.92"
-                stroke="#2a0a0a" stroke-width="2" stroke-opacity="0.7"/>
+          <!-- Right inner — intact upper + opened casement with a crow. -->
+          <!-- The lancet arched top + upper 2/3 stay as stained glass; the  -->
+          <!-- lower third is an opening with night sky behind, a swung pane -->
+          <!-- hinged on its left edge, and a crow perched on the sill.      -->
+          <g id="right-inner-lancet">
+            <!-- Cool interior-wall patch — night air leaking in, sits on    -->
+            <!-- the stone wall below the sill. Drawn first so the frame,    -->
+            <!-- pane and crow layer on top.                                 -->
+            <ellipse cx="1400" cy="720" rx="80" ry="40" fill="#1a2030" opacity="0.15"/>
+            <!-- Upper lancet body: arched top + upper 2/3, ending y=540. -->
+            <path d="M 1370 540 L 1370 295 Q 1370 220 1400 220 Q 1430 220 1430 295 L 1430 540 Z"
+                  fill="url(#clerestoryG)" opacity="0.92"
+                  stroke="#2a0a0a" stroke-width="2" stroke-opacity="0.7"/>
+            <!-- Night sky behind the opening. -->
+            <rect x="1370" y="540" width="60" height="120" fill="#05060a"/>
+            <!-- Three faint stars, hand-placed. -->
+            <circle cx="1384" cy="566" r="0.6" fill="#e0e0f0" opacity="0.6"/>
+            <circle cx="1413" cy="588" r="0.6" fill="#e0e0f0" opacity="0.6"/>
+            <circle cx="1395" cy="628" r="0.6" fill="#e0e0f0" opacity="0.6"/>
+            <!-- Stone frame: left jamb, sill, right jamb around the opening. -->
+            <path d="M 1370 540 L 1370 660 L 1430 660 L 1430 540"
+                  fill="none" stroke="#2a0a0a" stroke-width="2"/>
+            <!-- Opened casement pane — hinged on left edge (x=1370, y=600). -->
+            <!-- rotate(-35) swings the pane counter-clockwise, the trailing  -->
+            <!-- (right) edge catching warm interior light.                    -->
+            <g transform="rotate(-35 1370 600)">
+              <rect x="1370" y="540" width="60" height="120"
+                    fill="url(#darkClerestoryG)" opacity="0.9"
+                    stroke="#2a0a0a" stroke-width="1" stroke-opacity="0.6"/>
+              <line x1="1430" y1="540" x2="1430" y2="660"
+                    stroke="#ffb870" stroke-width="1" stroke-linecap="round"/>
+            </g>
+            <!-- Crow perched on the sill, with a gentle 6s breath. -->
+            <g class="crow-breath">
+              <use href="#crow" x="1373" y="633" width="34" height="27"/>
+            </g>
+          </g>
           <!-- Right outer -->
           <path d="M 1510 620 L 1510 265 Q 1510 190 1540 190 Q 1570 190 1570 265 L 1570 620 Z"
                 fill="url(#clerestoryG)"
                 stroke="#2a0a0a" stroke-width="2" stroke-opacity="0.7"/>
         </g>
 
+        <!-- Layer 6b: Boards nailed over the two left lancets in an X      -->
+        <!-- pattern — 8 diagonal planks per lancet (4 stacked X crosses).   -->
+        <!-- Each X has a \ plank (rotated +55°) and a / plank (rotated      -->
+        <!-- -55°) sharing the same centre, giving a condemned-window       -->
+        <!-- crosshatched look while the arched top stays bare so the       -->
+        <!-- stained-glass colour still leaks through above the boards.     -->
+        <g id="left-boards">
+          <!-- Left outer lancet (x 30–90, body y 265–620): 4 X crosses. -->
+          <use href="#plank" x="0" y="312" width="120" height="16" transform="rotate(55 60 320)"/>
+          <use href="#plank" x="0" y="312" width="120" height="16" transform="rotate(-55 60 320)"/>
+          <use href="#plank" x="0" y="402" width="120" height="16" transform="rotate(55 60 410)"/>
+          <use href="#plank" x="0" y="402" width="120" height="16" transform="rotate(-55 60 410)"/>
+          <use href="#plank" x="0" y="492" width="120" height="16" transform="rotate(55 60 500)"/>
+          <use href="#plank" x="0" y="492" width="120" height="16" transform="rotate(-55 60 500)"/>
+          <use href="#plank" x="0" y="582" width="120" height="16" transform="rotate(55 60 590)"/>
+          <use href="#plank" x="0" y="582" width="120" height="16" transform="rotate(-55 60 590)"/>
+          <!-- Left inner lancet (x 170–230, body y 295–660): 4 X crosses. -->
+          <use href="#plank" x="140" y="342" width="120" height="16" transform="rotate(55 200 350)"/>
+          <use href="#plank" x="140" y="342" width="120" height="16" transform="rotate(-55 200 350)"/>
+          <use href="#plank" x="140" y="432" width="120" height="16" transform="rotate(55 200 440)"/>
+          <use href="#plank" x="140" y="432" width="120" height="16" transform="rotate(-55 200 440)"/>
+          <use href="#plank" x="140" y="522" width="120" height="16" transform="rotate(55 200 530)"/>
+          <use href="#plank" x="140" y="522" width="120" height="16" transform="rotate(-55 200 530)"/>
+          <use href="#plank" x="140" y="612" width="120" height="16" transform="rotate(55 200 620)"/>
+          <use href="#plank" x="140" y="612" width="120" height="16" transform="rotate(-55 200 620)"/>
+        </g>
+
         <!-- Layer 7: Clerestory light wash — soft reddish glow bleeding onto stone -->
         <!-- near each lancet pair. Low opacity so it whispers rather than shouts.  -->
-        <ellipse cx="180"  cy="740" rx="380" ry="260" fill="#c44418" opacity="0.12"/>
+        <ellipse cx="180"  cy="740" rx="380" ry="260" fill="#c44418" opacity="0.06"/>
         <ellipse cx="1420" cy="740" rx="380" ry="260" fill="#c44418" opacity="0.12"/>
 
         <!-- Layer 8: Stone collar — two concentric circles hugging the skylight. -->
