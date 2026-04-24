@@ -416,15 +416,8 @@ body::before {
   left: 0;
   width: 100%;
   height: 300vh;
-  /* Hide the cathedral backdrop in the hero viewport so the skylight sits
-     against a clean dark field. Fade in below 80vh so the arches and
-     architectural detail are visible in history/creed/gates sections. */
-  -webkit-mask-image: linear-gradient(to bottom,
-      transparent 0, transparent 80vh,
-      black 110vh, black 100%);
-  mask-image: linear-gradient(to bottom,
-      transparent 0, transparent 80vh,
-      black 110vh, black 100%);
+  /* The hero now shows the vault directly — no mask. The vault's own
+     stone gradient handles the fade to darkness at the ceiling edges. */
 }
 @keyframes bannerSway {
   0%, 100% { transform: rotate(-1.5deg); }
