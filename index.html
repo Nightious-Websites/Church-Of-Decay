@@ -755,6 +755,13 @@ main {
 main > * + *:not(.hero):not(.hero-prose) {
   margin-top: clamp(80px, 12vh, 160px);
 }
+/* Every section below the hero must paint above the scroll-locked skylight
+   (z-index:1), otherwise their text slides behind the glass as the reader
+   scrolls past the hero. */
+main > section:not(.hero) {
+  position: relative;
+  z-index: 2;
+}
 
 .topbar {
   display: flex;
