@@ -2456,6 +2456,15 @@ if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (prefersReduced) return;
 
+  // Lock the skylight to the stone collar during scroll. The collar lives
+  // inside .scene, which is in a position:fixed ancestor (.cathedral) — so
+  // it doesn't scroll with the document. The skylight lives inside .hero
+  // which is normal flow and scrolls 1:1. To keep both at the same viewport
+  // Y, compensate for the scroll on the skylight AND mirror the scene's
+  // parallax offset. Baseline CSS transform on the skylight is translateX(-50%)
+  // for centering; compose with translateY here.
+  const skylightEl = document.querySelector('.skylight');
+
   let ticking = false;
 
   function updateScene() {
@@ -2465,7 +2474,11 @@ if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const progress = Math.max(0, Math.min(1, window.scrollY / maxScroll));
     const sceneH = sceneEl.offsetHeight;
     const panDistance = sceneH - window.innerHeight;
-    sceneEl.style.transform = `translateY(${-progress * panDistance}px)`;
+    const translateY = -progress * panDistance;
+    sceneEl.style.transform = `translateY(${translateY}px)`;
+    if (skylightEl) {
+      skylightEl.style.transform = `translate(-50%, ${window.scrollY + translateY}px)`;
+    }
   }
 
   function schedule() {
