@@ -1523,96 +1523,145 @@ footer .disclaimer {
       </defs>
 
       <!-- ═══ Roof vault — gothic vaulted ceiling (y=0–900) ═══ -->
+      <!-- ═══ Roof vault — paneled gothic ceiling (y=0–900) ═══ -->
+      <!-- Eight shaded panel wedges converging on the oculus at (800,558), -->
+      <!-- with subtle seam hairlines, a warm breathing halo, and four     -->
+      <!-- stained-glass clerestory lancets in the upper corners.          -->
       <g id="roof-vault">
         <defs>
-          <!-- Ceiling stone gradient — warmer/lighter near the skylight -->
-          <radialGradient id="vaultCeil" cx="800" cy="558" r="700" gradientUnits="userSpaceOnUse">
-            <stop offset="0%"   stop-color="#240909"/>
-            <stop offset="45%"  stop-color="#110404"/>
-            <stop offset="100%" stop-color="#070101"/>
+          <!-- Stone ceiling gradient: warm dark red near oculus, plunging -->
+          <!-- to near-black at the corners. -->
+          <radialGradient id="vaultCeil" cx="800" cy="558" r="760" gradientUnits="userSpaceOnUse">
+            <stop offset="0%"   stop-color="#3a1616"/>
+            <stop offset="35%"  stop-color="#1e0808"/>
+            <stop offset="70%"  stop-color="#0a0303"/>
+            <stop offset="100%" stop-color="#020000"/>
           </radialGradient>
 
-          <!-- Glow halo around skylight opening -->
-          <radialGradient id="bossHalo" cx="50%" cy="50%" r="50%">
-            <stop offset="0%"   stop-color="#c41818" stop-opacity="0.30"/>
-            <stop offset="100%" stop-color="#c41818" stop-opacity="0"/>
+          <!-- Panel belly highlight: very subtle lighter wash, centered at oculus. -->
+          <radialGradient id="panelLit" cx="800" cy="558" r="900" gradientUnits="userSpaceOnUse">
+            <stop offset="0%"  stop-color="#ffffff" stop-opacity="0.04"/>
+            <stop offset="70%" stop-color="#ffffff" stop-opacity="0"/>
           </radialGradient>
-          <!-- Bottom fade into arch section -->
+
+          <!-- Panel edge darkening: fades the panel outer regions to black, -->
+          <!-- so the wedge seams become visually distinct. -->
+          <radialGradient id="panelShade" cx="800" cy="558" r="900" gradientUnits="userSpaceOnUse">
+            <stop offset="0%"  stop-color="#000" stop-opacity="0"/>
+            <stop offset="90%" stop-color="#000" stop-opacity="0.45"/>
+          </radialGradient>
+
+          <!-- Warm halo around the oculus. -->
+          <radialGradient id="bossHalo" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stop-color="#c44418" stop-opacity="0.38"/>
+            <stop offset="100%" stop-color="#c44418" stop-opacity="0"/>
+          </radialGradient>
+
+          <!-- Clerestory stained-glass vertical gradient. -->
+          <linearGradient id="clerestoryG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="#ffc070"/>
+            <stop offset="50%"  stop-color="#e0501a"/>
+            <stop offset="100%" stop-color="#5a0a0a"/>
+          </linearGradient>
+
+          <!-- Bottom fade into the arch section below (preserved from prior design). -->
           <linearGradient id="vaultFade" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%"   stop-color="#070101" stop-opacity="0"/>
             <stop offset="53%"  stop-color="#070101" stop-opacity="0.92"/>
             <stop offset="100%" stop-color="#070101" stop-opacity="0.06"/>
           </linearGradient>
-          <!-- Glow filter: blurred copy beneath crisp line = light halo -->
-          <filter id="ribGlow" x="-40%" y="-40%" width="180%" height="180%">
-            <feGaussianBlur stdDeviation="1.4" result="blur"/>
-            <feMerge>
-              <feMergeNode in="blur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-          <!-- Mask: ribs are hidden inside the oculus so they stop cleanly at the skylight ring -->
-          <mask id="ribMask">
-            <rect x="0" y="0" width="1600" height="900" fill="white"/>
-            <circle cx="800" cy="558" r="230" fill="black"/>
-          </mask>
         </defs>
 
-        <!-- Dark stone ceiling surface -->
+        <!-- Layer 1: Stone base plane -->
         <rect x="0" y="0" width="1600" height="900" fill="url(#vaultCeil)"/>
 
-        <!-- ── Rib vault: 8 primary ribs, masked to stop at oculus ── -->
-        <g mask="url(#ribMask)" filter="url(#ribGlow)" stroke="#7a2424" stroke-width="1.6" fill="none" opacity="0.38">
-          <animate attributeName="opacity" values="0.38;0.56;0.38" dur="8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
-          <animate attributeName="stroke-width" values="1.6;2.1;1.6" dur="8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
-          <!-- Straight up -->
-          <path d="M 800 558 Q 800 110 800 0"/>
-          <!-- Upper-right -->
-          <path d="M 800 558 Q 1090 110 1400 0"/>
-          <!-- Right -->
-          <path d="M 800 558 Q 1320 252 1600 240"/>
-          <!-- Lower-right -->
-          <path d="M 800 558 Q 1090 600 1400 900"/>
-          <!-- Straight down -->
-          <path d="M 800 558 Q 800 620 800 900"/>
-          <!-- Lower-left -->
-          <path d="M 800 558 Q 510 600 200 900"/>
-          <!-- Left -->
-          <path d="M 800 558 Q 280 252 0 240"/>
-          <!-- Upper-left -->
-          <path d="M 800 558 Q 510 110 200 0"/>
+        <!-- Layer 2: Panel wedges (8, alternating fills).                    -->
+        <!-- Each wedge apex is the oculus (800,558); outer corners extend    -->
+        <!-- past the 1600×900 bounding box (to -50 / 1650 / 905) so seams    -->
+        <!-- don't appear at the box edges.                                   -->
+        <g>
+          <path d="M 800 558 L 800 -50 L 1410 -50 Z"                     fill="url(#panelLit)"/>
+          <path d="M 800 558 L 1410 -50 L 1650 -50 L 1650 235 Z"         fill="url(#panelShade)"/>
+          <path d="M 800 558 L 1650 235 L 1650 905 L 1410 905 Z"         fill="url(#panelLit)"/>
+          <path d="M 800 558 L 1410 905 L 800 905 Z"                     fill="url(#panelShade)"/>
+          <path d="M 800 558 L 800 905 L 190 905 Z"                      fill="url(#panelLit)"/>
+          <path d="M 800 558 L 190 905 L -50 905 L -50 235 Z"            fill="url(#panelShade)"/>
+          <path d="M 800 558 L -50 235 L -50 -50 L 190 -50 Z"            fill="url(#panelLit)"/>
+          <path d="M 800 558 L 190 -50 L 800 -50 Z"                      fill="url(#panelShade)"/>
         </g>
 
-        <!-- ── Rib vault: 8 secondary (tierceron) ribs ── -->
-        <g mask="url(#ribMask)" filter="url(#ribGlow)" stroke="#4e1818" stroke-width="1.0" fill="none" opacity="0.35">
-          <animate attributeName="opacity" values="0.35;0.52;0.35" dur="11s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
-          <animate attributeName="stroke-width" values="1.0;1.5;1.0" dur="11s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
-          <!-- Between up and upper-right -->
-          <path d="M 800 558 Q 930 90 1100 0"/>
-          <!-- Between upper-right and right -->
-          <path d="M 800 558 Q 1240 140 1600 80"/>
-          <!-- Between right and lower-right -->
-          <path d="M 800 558 Q 1360 430 1600 560"/>
-          <!-- Between lower-right and down -->
-          <path d="M 800 558 Q 1060 760 1240 900"/>
-          <!-- Between down and lower-left -->
-          <path d="M 800 558 Q 540 760 360 900"/>
-          <!-- Between lower-left and left -->
-          <path d="M 800 558 Q 240 430 0 560"/>
-          <!-- Between left and upper-left -->
-          <path d="M 800 558 Q 160 140 0 80"/>
-          <!-- Between upper-left and up -->
-          <path d="M 800 558 Q 670 90 500 0"/>
+        <!-- Layer 3: Rib-seam dark hairlines (8) -->
+        <g stroke="#1a0606" stroke-width="1.1" fill="none" opacity="0.55">
+          <line x1="800" y1="558" x2="800"  y2="-50"/>   <!-- N  -->
+          <line x1="800" y1="558" x2="1410" y2="-50"/>   <!-- NE -->
+          <line x1="800" y1="558" x2="1650" y2="235"/>   <!-- E  -->
+          <line x1="800" y1="558" x2="1410" y2="905"/>   <!-- SE -->
+          <line x1="800" y1="558" x2="800"  y2="905"/>   <!-- S  -->
+          <line x1="800" y1="558" x2="190"  y2="905"/>   <!-- SW -->
+          <line x1="800" y1="558" x2="-50"  y2="235"/>   <!-- W  -->
+          <line x1="800" y1="558" x2="190"  y2="-50"/>   <!-- NW -->
         </g>
 
-        <!-- ── Oculus collar — stone ring framing the skylight ── -->
+        <!-- Layer 4: Rib-seam inner highlights — shorter, warmer, catches the halo. -->
+        <!-- Each inner line runs from oculus to 35% of the way to its full endpoint. -->
+        <g stroke="#8a2a2a" stroke-width="0.6" fill="none" opacity="0.28">
+          <line x1="800" y1="558" x2="800"  y2="345"/>   <!-- N  -->
+          <line x1="800" y1="558" x2="1014" y2="345"/>   <!-- NE -->
+          <line x1="800" y1="558" x2="1098" y2="445"/>   <!-- E  -->
+          <line x1="800" y1="558" x2="1014" y2="679"/>   <!-- SE -->
+          <line x1="800" y1="558" x2="800"  y2="679"/>   <!-- S  -->
+          <line x1="800" y1="558" x2="586"  y2="679"/>   <!-- SW -->
+          <line x1="800" y1="558" x2="502"  y2="445"/>   <!-- W  -->
+          <line x1="800" y1="558" x2="586"  y2="345"/>   <!-- NW -->
+        </g>
+
+        <!-- Layer 5: Warm halo around the oculus — the ONLY animated element. -->
+        <!-- Opacity breathes 0.30 ↔ 0.45 over 10s, eased (matches existing    -->
+        <!-- animation easing pattern).                                         -->
+        <ellipse cx="800" cy="558" rx="360" ry="250" fill="url(#bossHalo)" opacity="0.30">
+          <animate attributeName="opacity"
+                   values="0.30;0.45;0.30"
+                   dur="10s"
+                   calcMode="spline"
+                   keyTimes="0;0.5;1"
+                   keySplines="0.4 0 0.6 1;0.4 0 0.6 1"
+                   repeatCount="indefinite"/>
+        </ellipse>
+
+        <!-- Layer 6: Clerestory lancets — 4 arched stained-glass windows. -->
+        <!-- Left outer (x≈60), left inner (x≈200), right inner (x≈1400), -->
+        <!-- right outer (x≈1540). Arched tops via quadratic Bezier.      -->
+        <g>
+          <!-- Left outer -->
+          <path d="M 30 620 L 30 265 Q 30 190 60 190 Q 90 190 90 265 L 90 620 Z"
+                fill="url(#clerestoryG)"
+                stroke="#2a0a0a" stroke-width="2" stroke-opacity="0.7"/>
+          <!-- Left inner -->
+          <path d="M 170 660 L 170 295 Q 170 220 200 220 Q 230 220 230 295 L 230 660 Z"
+                fill="url(#clerestoryG)" opacity="0.92"
+                stroke="#2a0a0a" stroke-width="2" stroke-opacity="0.7"/>
+          <!-- Right inner -->
+          <path d="M 1370 660 L 1370 295 Q 1370 220 1400 220 Q 1430 220 1430 295 L 1430 660 Z"
+                fill="url(#clerestoryG)" opacity="0.92"
+                stroke="#2a0a0a" stroke-width="2" stroke-opacity="0.7"/>
+          <!-- Right outer -->
+          <path d="M 1510 620 L 1510 265 Q 1510 190 1540 190 Q 1570 190 1570 265 L 1570 620 Z"
+                fill="url(#clerestoryG)"
+                stroke="#2a0a0a" stroke-width="2" stroke-opacity="0.7"/>
+        </g>
+
+        <!-- Layer 7: Clerestory light wash — soft reddish glow bleeding onto stone -->
+        <!-- near each lancet pair. Low opacity so it whispers rather than shouts.  -->
+        <ellipse cx="180"  cy="740" rx="380" ry="260" fill="#c44418" opacity="0.12"/>
+        <ellipse cx="1420" cy="740" rx="380" ry="260" fill="#c44418" opacity="0.12"/>
+
+        <!-- Layer 8: Stone collar — two concentric circles framing the skylight. -->
+        <!-- Sits on top of everything so the skylight PNG visually "sits in"     -->
+        <!-- the stone. (Preserved verbatim from the prior design.)                -->
         <circle cx="800" cy="558" r="230" fill="none" stroke="#6a2020" stroke-width="3.5" opacity="0.9"/>
         <circle cx="800" cy="558" r="190" fill="none" stroke="#4a1616" stroke-width="1.2" opacity="0.5"/>
 
-<!-- Warm glow halo around the skylight opening -->
-        <ellipse cx="800" cy="558" rx="260" ry="190" fill="url(#bossHalo)"/>
-
-        <!-- Bottom transition — fade into the arch section below -->
+        <!-- Bottom transition — fade the ceiling into the arch section below. -->
         <rect x="0" y="566" width="1600" height="584" fill="url(#vaultFade)"/>
 
       </g><!-- end #roof-vault -->
