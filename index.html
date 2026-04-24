@@ -501,7 +501,14 @@ body::before {
    skylight geometry scale together. */
 .hero {
   --skylight-diameter: min(41vmin, 435px);
-  --skylight-top: 8vh;
+  /* Hero's padding-box top sits below the viewport top by
+     <main> padding-top (40px) + topbar height (40px). Subtract that so the
+     skylight-top calc below anchors to the viewport, not the hero. */
+  --hero-offset: 80px;
+  /* Skylight center lands on the stone-collar center. The SVG oculus sits at
+     viewBox y=558 of 2700 inside .scene (height:300vh) — which resolves to
+     558/2700 * 300vh = 62vh in screen space for non-ultrawide aspects. */
+  --skylight-top: calc(62vh - var(--skylight-diameter) / 2 - var(--hero-offset));
 }
 
 /* Skylight — horned-skull lead-came stained glass as hero focal point.
@@ -775,11 +782,10 @@ main > * + *:not(.hero):not(.hero-prose) {
 
 /* HERO */
 .hero {
-  /* Top padding reserves vertical space for the absolute-positioned .skylight
-     plus a 30px gap before the eyebrow. Padding derives from
-     --skylight-diameter and --skylight-top so overriding those custom
-     props in a media query re-derives the whole stack. */
-  padding: calc(var(--skylight-top) + var(--skylight-diameter) + 30px) 0 0;
+  /* The heading now renders near the top of the hero with a small gap,
+     while the absolutely-positioned .skylight drops down to center on the
+     stone-collar circle (see --skylight-top calc above). */
+  padding: 60px 0 0;
   min-height: calc(100vh - 140px);
   min-height: calc(100svh - 140px);
   text-align: center;
@@ -954,13 +960,12 @@ main > .hero-prose + .creed {
 @media (max-width: 560px) {
   .gates { grid-template-columns: 1fr; }
   main { padding: 30px 20px 60px; }
-  /* Mobile .hero padding reserves space for the smaller mobile skylight
-     plus a 24px gap to the eyebrow. Override the shared custom props
-     and the padding / skylight geometry follow automatically. */
+  /* Mobile: preserve the skylight-on-collar alignment. Mobile main padding-top
+     drops to 30px but topbar stays ~40px, so --hero-offset shrinks to 70px. */
   .hero {
     --skylight-diameter: min(49vmin, 242px);
-    --skylight-top: 4vh;
-    padding: calc(var(--skylight-top) + var(--skylight-diameter) + 24px) 0 40px;
+    --hero-offset: 70px;
+    padding: 40px 0 40px;
   }
 }
 
