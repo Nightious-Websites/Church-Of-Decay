@@ -501,11 +501,12 @@ body::before {
    skylight geometry scale together. */
 .hero {
   /* Skylight sized as a rose-window inside the stone-collar circle.
-     The collar diameter resolves to ≈ 51vh for vh-dominant viewports
-     (radius 230 of viewBox 2700 × vh/900). 37.5vh (≈75% of the collar)
-     leaves a generous stone ring around the glass. 67.5vw clamps on
-     narrow screens so the disc doesn't run past the viewport edge. */
-  --skylight-diameter: min(37.5vh, 67.5vw);
+     The collar's outer ring (radius 192 in SVG viewBox) hugs the glass
+     directly, so skylight and collar scale together. 40vh diameter
+     maps to 360 viewBox units (=radius 180), leaving ~12 units of stone
+     frame between glass and outer ring at any vh-dominant viewport.
+     72vw clamps on narrow screens so the disc fits the viewport. */
+  --skylight-diameter: min(40vh, 72vw);
   /* Hero's padding-box top sits below the viewport top by
      <main> padding-top (40px) + topbar height (40px). Subtract that so the
      skylight-top calc below anchors to the viewport, not the hero. */
@@ -982,7 +983,7 @@ main > .hero-prose + .creed {
      Diameter shrinks by 25% to match desktop, with a 64vw clamp so the
      disc breathes inside the visible collar at narrow widths. */
   .hero {
-    --skylight-diameter: min(37.5vh, 64vw);
+    --skylight-diameter: min(40vh, 68vw);
     --hero-offset: 70px;
     padding: 40px 0 40px;
   }
@@ -1679,11 +1680,12 @@ footer .disclaimer {
         <ellipse cx="180"  cy="740" rx="380" ry="260" fill="#c44418" opacity="0.12"/>
         <ellipse cx="1420" cy="740" rx="380" ry="260" fill="#c44418" opacity="0.12"/>
 
-        <!-- Layer 8: Stone collar — two concentric circles framing the skylight. -->
-        <!-- Sits on top of everything so the skylight PNG visually "sits in"     -->
-        <!-- the stone. (Preserved verbatim from the prior design.)                -->
-        <circle cx="800" cy="558" r="230" fill="none" stroke="#6a2020" stroke-width="3.5" opacity="0.9"/>
-        <circle cx="800" cy="558" r="190" fill="none" stroke="#4a1616" stroke-width="1.2" opacity="0.5"/>
+        <!-- Layer 8: Stone collar — two concentric circles hugging the skylight. -->
+        <!-- Skylight diameter is 40vh → 360 viewBox units (radius 180) at any    -->
+        <!-- vh-dominant viewport. Outer ring at r=192 gives a 12-unit stone      -->
+        <!-- frame; inner hairline at r=183 sits 3 units off the glass edge.      -->
+        <circle cx="800" cy="558" r="192" fill="none" stroke="#6a2020" stroke-width="3.5" opacity="0.9"/>
+        <circle cx="800" cy="558" r="183" fill="none" stroke="#4a1616" stroke-width="1.2" opacity="0.5"/>
 
         <!-- Bottom transition — fade the ceiling into the arch section below. -->
         <rect x="0" y="566" width="1600" height="584" fill="url(#vaultFade)"/>
