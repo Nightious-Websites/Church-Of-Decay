@@ -591,9 +591,13 @@ body::before {
      skylight-top calc below anchors to the viewport, not the hero. */
   --hero-offset: 80px;
   /* Skylight center lands on the stone-collar center. The SVG oculus sits at
-     viewBox y=558 of 2700 inside .scene (height:300vh) — which resolves to
-     558/2700 * 300vh = 62vh in screen space for non-ultrawide aspects. */
-  --skylight-top: calc(62vh - var(--skylight-diameter) / 2 - var(--hero-offset));
+     viewBox y=558 of 2700 inside .scene (height:300vh), rendered with
+     xMidYMid slice → scale = max(innerW/1600, innerH/900).
+       Tall regime (aspect ≤ 16:9):   y=558 maps to 62vh.
+       Wide regime (aspect > 16:9):   y=558 maps to 150vh − 49.5vw
+         (= 558·innerW/1600 − (2700·innerW/1600 − 3·innerH)/2).
+     min() picks the correct regime; both terms equal 62vh at exactly 16:9. */
+  --skylight-top: calc(min(62vh, 150vh - 49.5vw) - var(--skylight-diameter) / 2 - var(--hero-offset));
 }
 
 /* Skylight — horned-skull lead-came stained glass as hero focal point.
