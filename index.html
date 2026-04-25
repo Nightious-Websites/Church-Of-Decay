@@ -490,6 +490,11 @@ body::before {
   height: 300vh;
   /* The hero now shows the vault directly — no mask. The vault's own
      stone gradient handles the fade to darkness at the ceiling edges. */
+  /* Shared by .skylight (the glass) and .skylight-collar (the stone ring) so
+     both siblings size off the same source of truth. CSS custom properties
+     inherit ancestor → descendant only, so this MUST live on a common
+     ancestor — defining it on .skylight alone leaves the collar at 0px. */
+  --skylight-diameter: min(40vh, 72vw);
 }
 @keyframes bannerSway {
   0%, 100% { transform: rotate(-1.5deg); }
@@ -576,36 +581,40 @@ body::before {
   100% { transform: translate(-10vmax, 6vmax) scale(0.9); }
 }
 
-/* Skylight size is a shared custom property so the hero padding and the
-   skylight geometry scale together. */
-.hero {
+/* Skylight — horned-skull lead-came stained glass as the cathedral's oculus.
+   The element lives INSIDE .scene (the parallax-panned backdrop layer), so
+   it inherits .scene's transform automatically and rides the parallax with
+   the SVG stone collar — no JS coordination needed. Custom properties live
+   on the rule itself so they cascade into mobile breakpoints overriding
+   them via .skylight selectors.
+   overflow:hidden + border-radius:50% clip the scaled came PNG to a circle,
+   so horn tips that extend past the ring get cut at the ring edge rather
+   than floating past it. The ring's border, drawn last (source order), then
+   covers the inner strip of the cut for a clean circular termination. */
+.skylight {
   /* Skylight sized as a rose-window inside the stone-collar circle.
      The collar's outer ring (radius 192 in SVG viewBox) hugs the glass
      directly, so skylight and collar scale together. 40vh diameter
      maps to 360 viewBox units (=radius 180), leaving ~12 units of stone
      frame between glass and outer ring at any vh-dominant viewport.
-     72vw clamps on narrow screens so the disc fits the viewport. */
-  --skylight-diameter: min(40vh, 72vw);
-  /* Hero's padding-box top sits below the viewport top by
-     <main> padding-top (40px) + topbar height (40px). Subtract that so the
-     skylight-top calc below anchors to the viewport, not the hero. */
-  --hero-offset: 80px;
+     72vw clamps on narrow screens so the disc fits the viewport.
+     The variable itself is declared on .scene (a shared ancestor) so the
+     collar sibling can read it via inheritance. */
   /* Skylight center lands on the stone-collar center. The SVG oculus sits at
      viewBox y=558 of 2700 inside .scene (height:300vh), rendered with
      xMidYMid slice → scale = max(innerW/1600, innerH/900).
        Tall regime (aspect ≤ 16:9):   y=558 maps to 62vh.
        Wide regime (aspect > 16:9):   y=558 maps to 150vh − 49.5vw
          (= 558·innerW/1600 − (2700·innerW/1600 − 3·innerH)/2).
-     min() picks the correct regime; both terms equal 62vh at exactly 16:9. */
-  --skylight-top: calc(min(62vh, 150vh - 49.5vw) - var(--skylight-diameter) / 2 - var(--hero-offset));
-}
+     min() picks the correct regime; both terms equal 62vh at exactly 16:9.
+     This y-coordinate is measured inside .scene's frame (whose top is the
+     viewport top before parallax), so no main/topbar offset is needed. */
+  --skylight-top: calc(min(62vh, 150vh - 49.5vw) - var(--skylight-diameter) / 2);
 
-/* Skylight — horned-skull lead-came stained glass as hero focal point.
-   overflow:hidden + border-radius:50% clip the scaled came PNG to a circle,
-   so horn tips that extend past the ring get cut at the ring edge rather
-   than floating past it. The ring's border, drawn last (source order), then
-   covers the inner strip of the cut for a clean circular termination. */
-.skylight {
+  /* Absolute, positioned within .scene's 300vh coordinate space. .scene's
+     transform: translateY(...) for parallax pan carries this element with
+     it automatically, and .cathedral being position:fixed means .scene's
+     y=0 is the viewport top (before parallax). */
   position: absolute;
   top: var(--skylight-top);
   left: 50%;
@@ -614,7 +623,6 @@ body::before {
   aspect-ratio: 1 / 1;
   border-radius: 50%;
   overflow: hidden;
-  z-index: 1;
   pointer-events: none;
   /* Emissive bleed — warm light escaping the window into the surrounding
      dark field. Three-stop falloff: tight close-range bloom, medium
@@ -625,6 +633,50 @@ body::before {
     0 0 70px rgba(255,80,30,0.28),
     0 0 160px rgba(255,40,14,0.18),
     0 0 320px rgba(200,20,10,0.10);
+}
+
+/* Stone collar — concentric rings that hug the skylight glass. Sibling of
+   .skylight (NOT a child, since .skylight has overflow:hidden), positioned
+   with the same center-y formula and sized as a ratio of --skylight-diameter,
+   so collar and glass scale and pan together at every aspect ratio. Replaces
+   the two SVG <circle> elements that previously lived at viewBox cx=800
+   cy=558; the SVG slice math drifted from the CSS clamp at ultrawide.
+   Ratios mirror the original SVG geometry (skylight r=180 viewBox units):
+     - outer ring outer-edge at r=193.75  → diameter ratio 193.75/180
+     - outer stroke 3.5 units              → 3.5/360 of skylight-diameter
+     - inner hairline outer-edge at r=183.6 → ratio 183.6/180
+     - inner stroke 1.2 units              → 1.2/360 of skylight-diameter */
+.skylight-collar {
+  --collar-diameter: calc(var(--skylight-diameter) * 193.75 / 180);
+  --collar-stroke: calc(var(--skylight-diameter) * 3.5 / 360);
+  --collar-inner-diameter: calc(var(--skylight-diameter) * 183.6 / 180);
+  --collar-inner-stroke: calc(var(--skylight-diameter) * 1.2 / 360);
+
+  position: absolute;
+  /* Same center math as .skylight (see comment on --skylight-top). Subtracting
+     half the collar diameter (not the skylight diameter) anchors the collar's
+     center on the glass center exactly. */
+  top: calc(min(62vh, 150vh - 49.5vw) - var(--collar-diameter) / 2);
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--collar-diameter);
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  box-sizing: border-box;
+  border: var(--collar-stroke) solid rgba(106, 32, 32, 0.9);
+  pointer-events: none;
+}
+.skylight-collar::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: var(--collar-inner-diameter);
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  box-sizing: border-box;
+  border: var(--collar-inner-stroke) solid rgba(74, 22, 22, 0.5);
 }
 
 /* Emissive red-glass composition — panes backlit from behind the window.
@@ -838,9 +890,10 @@ main {
 main > * + *:not(.hero):not(.hero-prose) {
   margin-top: clamp(80px, 12vh, 160px);
 }
-/* Every section below the hero must paint above the scroll-locked skylight
-   (z-index:1), otherwise their text slides behind the glass as the reader
-   scrolls past the hero. */
+/* Sections below the hero stay positioned to keep them composited cleanly
+   above the cathedral backdrop (which is z-index:0). main is z-index:10, so
+   any positioned section inside main will paint above the backdrop layers
+   including the skylight (which now lives inside the backdrop). */
 main > section:not(.hero) {
   position: relative;
   z-index: 2;
@@ -882,9 +935,10 @@ main > section:not(.hero):not(.hero-prose) {
 
 /* HERO */
 .hero {
-  /* The heading now renders near the top of the hero with a small gap,
-     while the absolutely-positioned .skylight drops down to center on the
-     stone-collar circle (see --skylight-top calc above). */
+  /* The heading renders near the top of the hero with a small gap. The
+     stained-glass skylight is no longer a child of .hero — it now lives
+     inside .scene (the cathedral parallax layer), so it rides the parallax
+     transform with the SVG stone collar and feels welded to the backdrop. */
   padding: 60px 0 0;
   min-height: calc(100vh - 140px);
   min-height: calc(100svh - 140px);
@@ -913,12 +967,24 @@ main > section:not(.hero):not(.hero-prose) {
   font-weight: 400;
   font-size: inherit;
   text-align: center;
-  /* Hero text always reads in front of the stained-glass skylight (z:1).
-     Without this, .skylight (later in DOM) paints over the bottom of
-     "Decay" at shorter viewports where the heading's fixed-px size
-     crashes into the vh-scaled skylight top. */
+  /* Hero text reads in front of the skylight, which now lives inside the
+     cathedral backdrop (root z:0). main is z:10, so the heading naturally
+     paints over the glass. The explicit z:2 here is belt-and-suspenders
+     for shorter viewports where the heading's fixed-px size crashes into
+     the vh-scaled skylight top. */
   position: relative;
   z-index: 2;
+}
+/* Suppress the focus ring that appears on initial load. The heading is
+   focused programmatically (gate-dismissal a11y handoff at line ~2823 / 2834)
+   so screen readers start at the top of the revealed content. tabindex="-1"
+   keeps it out of the natural tab order, so no sighted keyboard user can
+   land here — meaning :focus-visible serves no real navigation purpose, and
+   the default UA outline reads as a stray rectangle around the title until
+   the user clicks elsewhere. */
+.hero-heading:focus,
+.hero-heading:focus-visible {
+  outline: none;
 }
 .hero-church,
 .hero-of,
@@ -1072,13 +1138,15 @@ main > .hero-prose + .creed {
 @media (max-width: 560px) {
   .gates { grid-template-columns: 1fr; }
   main { padding: 30px 20px 60px; }
-  /* Mobile: preserve the skylight-on-collar alignment. Mobile main padding-top
-     drops to 30px but topbar stays ~40px, so --hero-offset shrinks to 70px.
-     Diameter shrinks by 25% to match desktop, with a 64vw clamp so the
-     disc breathes inside the visible collar at narrow widths. */
-  .hero {
+  /* Mobile: skylight diameter shrinks by 25% with a 68vw clamp so the disc
+     breathes inside the visible collar at narrow widths. The skylight now
+     lives inside .scene (the parallax backdrop) so it no longer needs a
+     hero-padding offset — anchoring is purely viewport-based.
+     Override on .scene (not .skylight) so .skylight-collar inherits too. */
+  .scene {
     --skylight-diameter: min(40vh, 68vw);
-    --hero-offset: 70px;
+  }
+  .hero {
     padding: 40px 0 40px;
   }
 }
@@ -1604,9 +1672,11 @@ footer {
    heading reads cleanly. Scoped to narrow widths so a short-height but
    wide docked laptop doesn't lose its full desktop hero. */
 @media (max-height: 640px) and (min-width: 561px) and (max-width: 900px) {
-  .hero {
+  /* Override on .scene so .skylight-collar inherits the same value. */
+  .scene {
     --skylight-diameter: min(26vh, 38vw);
-    --hero-offset: 60px;
+  }
+  .hero {
     min-height: auto;
     padding-top: 32px;
   }
@@ -1614,7 +1684,7 @@ footer {
 }
 
 @media (max-height: 480px) {
-  .skylight { display: none; }
+  .skylight, .skylight-collar { display: none; }
   .hero { min-height: auto; padding: 24px 0; }
   .hero-church, .hero-decay { font-size: clamp(40px, 8vw, 72px); line-height: 0.95; }
 }
@@ -1975,12 +2045,11 @@ footer {
         <ellipse cx="180"  cy="740" rx="380" ry="260" fill="#c44418" opacity="0.06"/>
         <ellipse cx="1420" cy="740" rx="380" ry="260" fill="#c44418" opacity="0.12"/>
 
-        <!-- Layer 8: Stone collar — two concentric circles hugging the skylight. -->
-        <!-- Skylight diameter is 40vh → 360 viewBox units (radius 180) at any    -->
-        <!-- vh-dominant viewport. Outer ring at r=192 gives a 12-unit stone      -->
-        <!-- frame; inner hairline at r=183 sits 3 units off the glass edge.      -->
-        <circle cx="800" cy="558" r="192" fill="none" stroke="#6a2020" stroke-width="3.5" opacity="0.9"/>
-        <circle cx="800" cy="558" r="183" fill="none" stroke="#4a1616" stroke-width="1.2" opacity="0.5"/>
+        <!-- Layer 8: Stone collar — drawn in CSS as .skylight-collar, a sibling -->
+        <!-- of .skylight outside the SVG. SVG slice math (xMidYMid) scales by   -->
+        <!-- max(W/1600, H/900), but the skylight diameter is min(40vh, 72vw),   -->
+        <!-- so an SVG-rendered ring drifted from the glass at non-16:9 aspects. -->
+        <!-- The CSS collar is keyed off --skylight-diameter, so it stays welded.-->
 
         <!-- Bottom transition — fade the ceiling into the arch section below. -->
         <rect x="0" y="566" width="1600" height="584" fill="url(#vaultFade)"/>
@@ -2309,6 +2378,19 @@ footer {
       <div class="walker w5"><svg viewBox="0 0 20 40" xmlns="http://www.w3.org/2000/svg"><use href="#stickFigure"/></svg></div>
     </div>
 
+    <!-- Skylight (stained-glass oculus) — lives inside .scene so .scene's
+         parallax transform carries it. The .skylight-collar sibling is the
+         stone ring that frames the glass; sourced AFTER .skylight so it
+         paints on top of the skylight's outward box-shadow bleed (otherwise
+         the warm halo would wash out the stone at the ring's location). -->
+    <div class="skylight" aria-hidden="true">
+      <div class="skylight-glow"></div>
+      <div class="skylight-shards"></div>
+      <img class="skylight-pattern" src="assets/skylight.webp" alt="" width="1024" height="1024" decoding="async" loading="lazy" fetchpriority="low" />
+      <div class="skylight-ring"></div>
+    </div>
+    <div class="skylight-collar" aria-hidden="true"></div>
+
     </div><!-- end .scene -->
 
     <div class="fog-layer" style="display:none">
@@ -2341,12 +2423,6 @@ footer {
         <span class="hero-of" aria-hidden="true">· of ·</span>
         <span class="hero-decay" aria-hidden="true">Decay</span>
       </h1>
-      <div class="skylight" aria-hidden="true">
-        <div class="skylight-glow"></div>
-        <div class="skylight-shards"></div>
-        <img class="skylight-pattern" src="assets/skylight.webp" alt="" width="1024" height="1024" decoding="async" loading="lazy" fetchpriority="low" />
-        <div class="skylight-ring"></div>
-      </div>
 
       <div class="divider">
         <span></span>
@@ -2825,15 +2901,12 @@ if (!lowPowerDevice) {
   if (!sceneEl) return;
   if (lowPowerDevice) return;
 
-  // Lock the skylight to the stone collar during scroll. The collar lives
-  // inside .scene, which is in a position:fixed ancestor (.cathedral) — so
-  // it doesn't scroll with the document. The skylight lives inside .hero
-  // which is normal flow and scrolls 1:1. To keep both at the same viewport
-  // Y, compensate for the scroll on the skylight AND mirror the scene's
-  // parallax offset. Baseline CSS transform on the skylight is translateX(-50%)
-  // for centering; compose with translateY here.
-  const skylightEl = document.querySelector('.skylight');
-
+  // Parallax-pan .scene as the user scrolls. .scene is 300vh tall inside a
+  // position:fixed .cathedral; translateY shifts its 3-viewport-tall
+  // interior up over the course of the scroll, so the cathedral feels like
+  // a deep vault you descend through. The .skylight now lives inside
+  // .scene, so this transform carries it automatically — no separate
+  // skylight tracking is needed.
   let ticking = false;
 
   function updateScene() {
@@ -2845,9 +2918,6 @@ if (!lowPowerDevice) {
     const panDistance = sceneH - window.innerHeight;
     const translateY = -progress * panDistance;
     sceneEl.style.transform = `translateY(${translateY}px)`;
-    if (skylightEl) {
-      skylightEl.style.transform = `translate(-50%, ${window.scrollY + translateY}px)`;
-    }
   }
 
   function schedule() {
